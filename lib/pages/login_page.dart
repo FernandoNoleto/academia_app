@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:academia_app/pages/new_account_page.dart';
 import 'package:academia_app/pages/forgot_password_page.dart';
 
+import 'package:academia_app/common/providers/container_provider.dart';
+
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -24,19 +26,9 @@ class LoginPageState extends State<LoginPage> {
         backgroundColor: Colors.blue,
         title: const Text("Login"),
       ),
-      body: Container(
-        height: MediaQuery.of(context).size.height,
-        padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 30),
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Colors.white,
-              Colors.white70,
-            ],
-          ),
-        ),
+      body: ContainerProvider(
+        horizontal: 10,
+        vertical: 30,
         child: SingleChildScrollView(
           child: Column(
             children: [
@@ -92,7 +84,7 @@ class LoginPageState extends State<LoginPage> {
                             });
                           },
                         ),
-                      hintText: 'Insira seu senha',
+                        hintText: 'Insira seu senha',
                         focusedBorder: const OutlineInputBorder(
                             borderRadius: BorderRadius.all(Radius.circular(5.0)),
                             borderSide: BorderSide(color: Colors.blue)

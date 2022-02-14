@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 
-/*dependencies*/
+/*Dependencies*/
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 // import 'package:url_launcher/url_launcher.dart';
 // import 'package:firebase_auth/firebase_auth.dart';
 // import 'package:firebase_core/firebase_core.dart';
 // import 'package:cloud_firestore/cloud_firestore.dart';
-
 // import 'firebase_options.dart';
 
-
+/*Providers*/
+import 'package:academia_app/common/providers/youtube_player_provider.dart';
+import 'package:academia_app/common/providers/card_provider.dart';
+import 'package:academia_app/common/providers/container_provider.dart';
 
 
 
@@ -22,80 +24,61 @@ class DetailedExercisePage extends StatefulWidget {
 }
 
 class _DetailedExercisePageState extends State<DetailedExercisePage> {
-  //@override
-  // Widget build(BuildContext context) {
-  //   return Scaffold(
-  //     floatingActionButton: null,
-  //     body: StreamBuilder(
-  //         stream: Firestore.instance.collection('Videos').snapshots(),
-  //         builder:
-  //             (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-  //           if (!snapshot.hasData) {
-  //             return const Center(
-  //               child: CircularProgressIndicator(),
-  //             );
-  //           }
-  //
-  //           return ListView(
-  //             children: snapshot.data.documents.map((document) {
-  //               var url = document['url'];
-  //
-  //               YoutubePlayerController _controller = YoutubePlayerController(
-  //                 initialVideoId: YoutubePlayer.convertUrlToId(url)!,
-  //                 flags: const YoutubePlayerFlags(
-  //                   autoPlay: false,
-  //                   mute: false,
-  //                   disableDragSeek: false,
-  //                   loop: false,
-  //                   isLive: false,
-  //                   forceHD: false,
-  //                 ),
-  //               );
-  //
-  //               return Center(
-  //                 child: SizedBox(
-  //                   width: MediaQuery.of(context).size.width / 1.2,
-  //                   child: Column(
-  //                     children: <Widget>[
-  //                       Padding(
-  //                         padding: const EdgeInsets.only(top: 20, bottom: 5,),
-  //                         child: Text(document['title']),
-  //                       ),
-  //                       YoutubePlayer(
-  //                         controller: _controller,
-  //                         liveUIColor: Colors.amber,
-  //                       ),
-  //                     ],
-  //                   ),
-  //                 ),
-  //               );
-  //             }).toList(),
-  //           );
-  //         }),
-  //   );
-  // }
-
-  static String myVideoId = 'hwf01VTWMCo';
-
-  // Initiate the Youtube player controller
-  final YoutubePlayerController _controller = YoutubePlayerController(
-    initialVideoId: myVideoId,
-    flags: const YoutubePlayerFlags(
-      autoPlay: true,
-      mute: false,
-    ),
-  );
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('Flutter and Youtube'),
-        ),
-        body: YoutubePlayer(
-          controller: _controller,
-          liveUIColor: Colors.amber,
-        )
+      appBar: AppBar(
+        title: const Text('Nome do exercicio'),
+      ),
+      body: SingleChildScrollView(
+          child: ContainerProvider(
+            horizontal: 10,
+            vertical: 30,
+            child: Column(
+              children: <Widget>[
+                const CardProvider(
+                    title: Text("Nome exercicio"),
+                    subtitle: Text("Repetições")
+                ),
+                const SizedBox(height: 10),
+                YoutubePlayer(
+                  controller: YoutubeProvider().youtubePlayerController('hwf01VTWMCo'),
+                  liveUIColor: Colors.amber,
+                ),
+              ],
+            ),
+          )
+      ),
     );
   }
 }
+
+
+// Container(
+// height: MediaQuery.of(context).size.height,
+// padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 30),
+// decoration: const BoxDecoration(
+// gradient: LinearGradient(
+// begin: Alignment.topCenter,
+// end: Alignment.bottomCenter,
+// colors: [
+// Colors.white,
+// Colors.white70,
+// ],
+// ),
+// ),
+// child: Column(
+// children: <Widget>[
+// const CardProvider(
+// title: Text("Nome exercicio"),
+// subtitle: Text("Repetições")
+// ),
+// const SizedBox(height: 10),
+// YoutubePlayer(
+// controller: YoutubeProvider().youtubePlayerController('hwf01VTWMCo'),
+// liveUIColor: Colors.amber,
+// ),
+// ],
+// ),
+// ),

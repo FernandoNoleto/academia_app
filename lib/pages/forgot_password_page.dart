@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'package:academia_app/common/providers/container_provider.dart';
+
 
 class ForgotPasswordPage extends StatefulWidget {
   const ForgotPasswordPage({Key? key}) : super(key: key);
@@ -16,19 +18,9 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
         backgroundColor: Colors.blue,
         title: const Text("Recuperar senha"),
       ),
-      body: Container(
-        height: MediaQuery.of(context).size.height,
-        padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 30),
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Colors.white,
-              Colors.white70,
-            ],
-          ),
-        ),
+      body: ContainerProvider(
+        horizontal: 10,
+        vertical: 30,
         child: SingleChildScrollView(
           child: Column(
             children: [
@@ -81,7 +73,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                     const Padding(
                       padding: EdgeInsets.symmetric(vertical: 16.0),
                       child: Text(
-                        "Será enviado um email de recuperação de senha para o email cadastrado"
+                          "Será enviado um email de recuperação de senha para o email cadastrado"
                       ),
                     ),
                   ],

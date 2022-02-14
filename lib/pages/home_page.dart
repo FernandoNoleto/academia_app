@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 
 import 'detailed_exercise_page.dart';
 
+import 'package:academia_app/common/providers/card_provider.dart';
+import 'package:academia_app/common/providers/container_provider.dart';
+
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -17,139 +20,23 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         title: const Text("Bem vindo de volta 'user'"),
       ),
-      body: SizedBox(
+      body: ContainerProvider(
+        horizontal: 10,
+        vertical: 10,
         child: Center(
           child: ListView(
             children: <Widget>[
-              Card(
-                elevation: 10,
-                margin: const EdgeInsets.all(10),
-                child: ListTile(
-                  title: const Text("Titulo exercício"),
-                  subtitle: const Text("Repetições: 10"),
-                  leading: const FlutterLogo(
-                    size: 72.0,
-                  ),
-                  onTap: () {
-                    print("Clicou no card");
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const DetailedExercisePage()),
-                    );
-                  },
-                ),
-              ),
-              Card(
-                elevation: 10,
-                margin: const EdgeInsets.all(10),
-                child: ListTile(
-                  title: const Text("Titulo exercício"),
-                  subtitle: const Text("Repetições: 10"),
-                  leading: const FlutterLogo(
-                    size: 72.0,
-                  ),
-                  onTap: () {
-                    print("Clicou no card");
-                  },
-                ),
-              ),
-              Card(
-                elevation: 10,
-                margin: const EdgeInsets.all(10),
-                child: ListTile(
-                  title: const Text("Titulo exercício"),
-                  subtitle: const Text("Repetições: 10"),
-                  leading: const FlutterLogo(
-                    size: 72.0,
-                  ),
-                  onTap: () {
-                    print("Clicou no card");
-                  },
-                ),
-              ),
-              Card(
-                elevation: 10,
-                margin: const EdgeInsets.all(10),
-                child: ListTile(
-                  title: const Text("Titulo exercício"),
-                  subtitle: const Text("Repetições: 10"),
-                  leading: const FlutterLogo(
-                    size: 72.0,
-                  ),
-                  onTap: () {
-                    print("Clicou no card");
-                  },
-                ),
-              ),
-              Card(
-                elevation: 10,
-                margin: const EdgeInsets.all(10),
-                child: ListTile(
-                  title: const Text("Titulo exercício"),
-                  subtitle: const Text("Repetições: 10"),
-                  leading: const FlutterLogo(
-                    size: 72.0,
-                  ),
-                  onTap: () {
-                    print("Clicou no card");
-                  },
-                ),
-              ),
-              Card(
-                elevation: 10,
-                margin: const EdgeInsets.all(10),
-                child: ListTile(
-                  title: const Text("Titulo exercício"),
-                  subtitle: const Text("Repetições: 10"),
-                  leading: const FlutterLogo(
-                    size: 72.0,
-                  ),
-                  onTap: () {
-                    print("Clicou no card");
-                  },
-                ),
-              ),
-              Card(
-                elevation: 10,
-                margin: const EdgeInsets.all(10),
-                child: ListTile(
-                  title: const Text("Titulo exercício"),
-                  subtitle: const Text("Repetições: 10"),
-                  leading: const FlutterLogo(
-                    size: 72.0,
-                  ),
-                  onTap: () {
-                    print("Clicou no card");
-                  },
-                ),
-              ),
-              Card(
-                elevation: 10,
-                margin: const EdgeInsets.all(10),
-                child: ListTile(
-                  title: const Text("Titulo exercício"),
-                  subtitle: const Text("Repetições: 10"),
-                  leading: const FlutterLogo(
-                    size: 72.0,
-                  ),
-                  onTap: () {
-                    print("Clicou no card");
-                  },
-                ),
-              ),
-              Card(
-                elevation: 10,
-                margin: const EdgeInsets.all(10),
-                child: ListTile(
-                  title: const Text("Titulo exercício"),
-                  subtitle: const Text("Repetições: 10"),
-                  leading: const FlutterLogo(
-                    size: 72.0,
-                  ),
-                  onTap: () {
-                    print("Clicou no card");
-                  },
-                ),
+              CardProvider(
+                title: const Text("Nome exercício"),
+                subtitle: const Text("Repetições: 10"),
+                onTap: (){
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) {
+                      return const DetailedExercisePage();
+                    }),
+                  );
+                },
               ),
             ],
           ),
