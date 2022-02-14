@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 
 /*dependencies*/
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
-import 'package:url_launcher/url_launcher.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+// import 'package:url_launcher/url_launcher.dart';
+// import 'package:firebase_auth/firebase_auth.dart';
+// import 'package:firebase_core/firebase_core.dart';
+// import 'package:cloud_firestore/cloud_firestore.dart';
 
 // import 'firebase_options.dart';
 
@@ -95,6 +95,7 @@ class _DetailedExercisePageState extends State<DetailedExercisePage> {
         body: YoutubePlayer(
           controller: _controller,
           liveUIColor: Colors.amber,
-        ));
+        )
+    );
   }
 }
