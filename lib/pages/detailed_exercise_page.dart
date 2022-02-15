@@ -9,9 +9,9 @@ import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 // import 'firebase_options.dart';
 
 /*Providers*/
-import 'package:academia_app/common/providers/youtube_player_provider.dart';
-import 'package:academia_app/common/providers/card_provider.dart';
-import 'package:academia_app/common/providers/container_provider.dart';
+import 'package:academiaapp/common/providers/youtube_player_provider.dart';
+import 'package:academiaapp/common/providers/card_provider.dart';
+import 'package:academiaapp/common/providers/container_provider.dart';
 
 
 

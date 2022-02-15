@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "623652127430",
+    "project_id": "academia-app-8ac31",
+    "storage_bucket": "academia-app-8ac31.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:623652127430:android:90cd8fdf32703d36118dc7",
+        "android_client_info": {
+          "package_name": "com.fernandonoleto.academiaapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "623652127430-pciivn0avpp58en8lc30n53bf2bnbctr.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.fernandonoleto.academiaapp",
+            "certificate_hash": "8dcabc77d3099dc91153d6043a14f9a99cd78528"
+          }
+        },
+        {
+          "client_id": "623652127430-qi2np67i2akat9kb1pirrfsn6egbjl3v.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDNQN3CqKN52imrBElkpA2cd0bPt6JzmQw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "623652127430-qi2np67i2akat9kb1pirrfsn6egbjl3v.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

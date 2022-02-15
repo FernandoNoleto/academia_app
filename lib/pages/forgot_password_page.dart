@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:academia_app/common/providers/container_provider.dart';
+import 'package:academiaapp/common/providers/container_provider.dart';
 
 
 class ForgotPasswordPage extends StatefulWidget {

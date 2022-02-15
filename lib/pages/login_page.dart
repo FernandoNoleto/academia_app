@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 
-import 'package:academia_app/pages/new_account_page.dart';
-import 'package:academia_app/pages/forgot_password_page.dart';
+/*Pages*/
+import 'package:academiaapp/pages/new_account_page.dart';
+import 'package:academiaapp/pages/forgot_password_page.dart';
 
-import 'package:academia_app/common/providers/container_provider.dart';
+/*Providers*/
+import 'package:academiaapp/common/providers/container_provider.dart';
 
 
 class LoginPage extends StatefulWidget {
