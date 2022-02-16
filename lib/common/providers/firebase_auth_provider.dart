@@ -1,12 +1,9 @@
 import 'dart:convert';
-
 import 'package:academiaapp/common/models/user.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+// import 'package:firebase_core/firebase_core.dart';
+// import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
 import 'package:academiaapp/common/providers/routes_provider.dart';
-// import 'firebase_options.dart';
-
 
 
 class SignUpProvider{
@@ -22,7 +19,6 @@ class SignUpProvider{
         },
       ),
     );
-
     print(response.body);
   }
 }
@@ -40,7 +36,6 @@ class LoginService {
         },
       ),
     );
-
     print(response.body);
   }
 }

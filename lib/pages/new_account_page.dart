@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 
-
+/*Providers*/
 import 'package:academiaapp/common/providers/container_provider.dart';
 import 'package:academiaapp/common/providers/firebase_auth_provider.dart';
-
-
 
 class NewAccountPage extends StatefulWidget {
   const NewAccountPage({Key? key}) : super(key: key);
@@ -31,7 +29,6 @@ class _NewAccountPageState extends State<NewAccountPage> {
   }
 
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -53,7 +50,6 @@ class _NewAccountPageState extends State<NewAccountPage> {
                   children: <Widget>[
                     const Image(
                       image: AssetImage('assets/images/gym-icon.png'),
-                      // width: 550,
                     ),
                     const SizedBox(height: 10),
                     TextFormField(
@@ -103,6 +99,8 @@ class _NewAccountPageState extends State<NewAccountPage> {
                       validator: (String? email) {
                         if (email == null || email.isEmpty) {
                           return 'Por favor, insira seu email corretamente';
+                        } else if (!email.contains("@")) {
+                          return "E-mail inválido";
                         }
                         return null;
                       },
@@ -111,7 +109,6 @@ class _NewAccountPageState extends State<NewAccountPage> {
                     TextFormField(
                       obscureText: _obscurePassword,
                       controller: _passwordInputController,
-                      // style: const TextStyle(color: Colors.white),
                       decoration: InputDecoration(
                         suffixIcon: IconButton(
                           icon: Icon(

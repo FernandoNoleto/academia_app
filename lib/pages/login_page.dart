@@ -88,7 +88,6 @@ class LoginPageState extends State<LoginPage> {
                     TextFormField(
                       obscureText: _obscurePassword,
                       controller: _passwordInputController,
-                      // style: const TextStyle(color: Colors.white),
                       decoration: InputDecoration(
                         suffixIcon: IconButton(
                           icon: Icon(
@@ -150,7 +149,6 @@ class LoginPageState extends State<LoginPage> {
                         child: const Text("Esqueceu sua senha?"),
                       ),
                     ),
-                    // const SizedBox(height: 10),
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 16.0),
                       child: FractionallySizedBox(

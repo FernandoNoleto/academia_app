@@ -8,7 +8,7 @@ class YoutubeProvider{
     YoutubePlayerController controller = YoutubePlayerController(
       initialVideoId: urlVideo,
       flags: const YoutubePlayerFlags(
-        autoPlay: true,
+        autoPlay: false,
         mute: false,
       ),
     );
