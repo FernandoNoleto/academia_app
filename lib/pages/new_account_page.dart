@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 
 import 'package:academiaapp/common/providers/container_provider.dart';
-
+import 'package:academiaapp/common/providers/firebase_auth_provider.dart';
 
 
 
@@ -14,8 +14,23 @@ class NewAccountPage extends StatefulWidget {
 }
 
 class _NewAccountPageState extends State<NewAccountPage> {
+  final TextEditingController _nameInputController = TextEditingController();
+  final TextEditingController _emailInputController = TextEditingController();
   final TextEditingController _passwordInputController = TextEditingController();
+  TextEditingController _confirmInputController = TextEditingController();
   bool _obscurePassword = true;
+  final _formKey = GlobalKey<FormState>();
+
+
+  void _doSignUp() {
+    if (_formKey.currentState!.validate()) {
+      SignUpProvider().signUp(_emailInputController.text, _passwordInputController.text);
+    } else {
+      print("invalido");
+    }
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +46,7 @@ class _NewAccountPageState extends State<NewAccountPage> {
           child: Column(
             children: [
               Form(
-                // key: _formKey,
+                key: _formKey,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -42,6 +57,7 @@ class _NewAccountPageState extends State<NewAccountPage> {
                     ),
                     const SizedBox(height: 10),
                     TextFormField(
+                      controller: _nameInputController,
                       autofocus: true,
                       decoration: const InputDecoration(
                         hintText: 'Insira seu nome',
@@ -67,6 +83,7 @@ class _NewAccountPageState extends State<NewAccountPage> {
                     ),
                     const SizedBox(height: 10),
                     TextFormField(
+                      controller: _emailInputController,
                       autofocus: true,
                       decoration: const InputDecoration(
                         hintText: 'Insira seu email',
@@ -129,7 +146,7 @@ class _NewAccountPageState extends State<NewAccountPage> {
                         child: ElevatedButton(
                           child: const Text("Criar nova conta"),
                           onPressed: () {
-
+                            _doSignUp();
                           },
                         ),
                       ),

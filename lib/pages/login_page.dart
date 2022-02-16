@@ -6,6 +6,7 @@ import 'package:academiaapp/pages/forgot_password_page.dart';
 
 /*Providers*/
 import 'package:academiaapp/common/providers/container_provider.dart';
+import 'package:academiaapp/common/providers/firebase_auth_provider.dart';
 
 
 class LoginPage extends StatefulWidget {
@@ -16,10 +17,23 @@ class LoginPage extends StatefulWidget {
 }
 
 class LoginPageState extends State<LoginPage> {
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final _formKey = GlobalKey<FormState>();
   TextEditingController _mailInputController = TextEditingController();
   TextEditingController _passwordInputController = TextEditingController();
   bool _obscurePassword = true;
+
+
+  /*Functions*/
+
+  void _doLogin() async {
+    if (_formKey.currentState!.validate()) {
+      LoginService().login(_mailInputController.text, _passwordInputController.text);
+    } else {
+      print("invalido");
+    }
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -46,6 +60,7 @@ class LoginPageState extends State<LoginPage> {
                     ),
                     const SizedBox(height: 10),
                     TextFormField(
+                      controller: _mailInputController,
                       autofocus: true,
                       decoration: const InputDecoration(
                         hintText: 'Insira seu email',
@@ -109,7 +124,7 @@ class LoginPageState extends State<LoginPage> {
                         child: ElevatedButton(
                           child: const Text("Entrar"),
                           onPressed: () {
-
+                            _doLogin();
                           },
                         ),
                       ),
@@ -161,3 +176,5 @@ class LoginPageState extends State<LoginPage> {
     );
   }
 }
+
+
