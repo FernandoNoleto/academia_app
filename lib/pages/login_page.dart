@@ -13,6 +13,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import '../common/models/user.dart';
+import '../common/models/exercise.dart';
 
 
 class LoginPage extends StatefulWidget {
