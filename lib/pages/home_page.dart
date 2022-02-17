@@ -7,16 +7,23 @@ import 'detailed_exercise_page.dart';
 import 'package:academiaapp/common/providers/card_provider.dart';
 import 'package:academiaapp/common/providers/container_provider.dart';
 
+import '../common/models/user.dart';
+
+
 /*Plugins*/
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+// import 'package:firebase_auth/firebase_auth.dart';
 import 'package:academiaapp/firebase_options.dart';
 
 
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+  HomePage({Key? key, required this.name, required this.uid}) : super(key: key);
+
+  final String uid;
+  final String name;
+  // User user;
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -30,7 +37,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Bem vindo de volta 'user'"),
+        title: Text("Bem vindo de volta ${widget.name}"),
       ),
       body: ContainerProvider(
         horizontal: 10,

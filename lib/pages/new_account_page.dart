@@ -22,7 +22,12 @@ class _NewAccountPageState extends State<NewAccountPage> {
 
   void _doSignUp() {
     if (_formKey.currentState!.validate()) {
-      SignUpProvider().signUp(_emailInputController.text, _passwordInputController.text);
+      SignUpProvider()
+          .signUp(
+          _emailInputController.text,
+          _passwordInputController.text,
+          _nameInputController.text
+      );
     } else {
       print("invalido");
     }

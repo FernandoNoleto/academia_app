@@ -1,3 +1,4 @@
+import 'package:academiaapp/pages/home_page.dart';
 import 'package:flutter/material.dart';
 
 /*Pages*/
@@ -7,6 +8,11 @@ import 'package:academiaapp/pages/forgot_password_page.dart';
 /*Providers*/
 import 'package:academiaapp/common/providers/container_provider.dart';
 import 'package:academiaapp/common/providers/firebase_auth_provider.dart';
+
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+
+import '../common/models/user.dart';
 
 
 class LoginPage extends StatefulWidget {
@@ -25,9 +31,9 @@ class LoginPageState extends State<LoginPage> {
 
   /*Functions*/
 
-  void _doLogin() async {
+  _doLogin() async {
     if (_formKey.currentState!.validate()) {
-      LoginService().login(_mailInputController.text, _passwordInputController.text);
+      return await LoginService().login(_mailInputController.text, _passwordInputController.text);
     } else {
       print("invalido");
     }
@@ -122,8 +128,20 @@ class LoginPageState extends State<LoginPage> {
                         widthFactor: 1, // means 100%, you can change this to 0.8 (80%)
                         child: ElevatedButton(
                           child: const Text("Entrar"),
-                          onPressed: () {
-                            _doLogin();
+                          onPressed: () async {
+                            http.Response response = await _doLogin();
+                            if (response.statusCode == 200){
+                              User user = User.fromJson(jsonDecode(response.body));
+                              print("User: $user");
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => HomePage(name: user.name, uid: user.uid,)
+                                  )
+                              );
+                            } else {
+                              throw Exception('Login invalido');
+                            }
                           },
                         ),
                       ),

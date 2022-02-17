@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:academiaapp/common/models/user.dart';
 // import 'package:firebase_core/firebase_core.dart';
 // import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
@@ -8,11 +7,12 @@ import 'package:academiaapp/common/providers/routes_provider.dart';
 
 class SignUpProvider{
 
-  signUp(String email, String password) async {
+  signUp(String email, String password, name) async {
     http.Response response = await http.post(
       Uri.parse(Routes().signUp()),
       body: json.encode(
         {
+          "displayName": name,
           "email": email,
           "password": password,
           "returnSecureToken": true,
@@ -36,6 +36,7 @@ class LoginService {
         },
       ),
     );
-    print(response.body);
+    // print(response.body);
+    return response;
   }
 }
