@@ -1,3 +1,4 @@
+import 'package:academiaapp/common/providers/firebase_storage.dart';
 import 'package:flutter/material.dart';
 
 /*Paginas*/
@@ -49,12 +50,13 @@ class _HomePageState extends State<HomePage> {
                 title: const Text("Nome exercício"),
                 subtitle: const Text("Repetições: 10"),
                 onTap: (){
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) {
-                      return const DetailedExercisePage();
-                    }),
-                  );
+                  // Navigator.push(
+                  //   context,
+                  //   MaterialPageRoute(builder: (context) {
+                  //     return const DetailedExercisePage();
+                  //   }),
+                  // );
+                  FirebaseStorageProvider().upload();
                 },
               ),
               // StreamBuilder(
