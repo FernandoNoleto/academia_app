@@ -8,13 +8,10 @@ import 'detailed_exercise_page.dart';
 import 'package:academiaapp/common/providers/card_provider.dart';
 import 'package:academiaapp/common/providers/container_provider.dart';
 
-import '../common/models/user.dart';
-
 
 /*Plugins*/
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
-// import 'package:firebase_auth/firebase_auth.dart';
 import 'package:academiaapp/firebase_options.dart';
 
 
@@ -50,12 +47,12 @@ class _HomePageState extends State<HomePage> {
                 title: const Text("Nome exercício"),
                 subtitle: const Text("Repetições: 10"),
                 onTap: (){
-                  // Navigator.push(
-                  //   context,
-                  //   MaterialPageRoute(builder: (context) {
-                  //     return const DetailedExercisePage();
-                  //   }),
-                  // );
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) {
+                      return const DetailedExercisePage();
+                    }),
+                  );
                   FirebaseStorageProvider().upload();
                 },
               ),
