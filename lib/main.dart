@@ -43,7 +43,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
       title: 'Gym App',
-      home: SetDailyExercisesPage(),
+      home: LoginPage(),
+      // home: HomePage(name: "Fernando", uid: "ID",),
       debugShowCheckedModeBanner: false,
     );
   }

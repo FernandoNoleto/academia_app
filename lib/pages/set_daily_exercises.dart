@@ -14,11 +14,11 @@ class SetDailyExercisesPage extends StatefulWidget {
 
 class _SetDailyExercisesPageState extends State<SetDailyExercisesPage> {
 
-  final database = FirebaseDatabase.instance.reference();
+  final database = FirebaseDatabase.instance.ref();
   @override
   Widget build(BuildContext context) {
 
-    final userRef = database.child('/exerciciododia');
+    final userRef = database.child('/qnggfarRIdVN5MR9Yg2qDUADku62');
     var obj = {'exercise': 'flexao', 'repetitions': '20', 'interval': '60'};
 
     return Scaffold(
@@ -27,20 +27,20 @@ class _SetDailyExercisesPageState extends State<SetDailyExercisesPage> {
       ),
       body: Center(
         child: Padding(
-          padding: EdgeInsets.only(top: 15),
+          padding: const EdgeInsets.only(top: 15),
           child: Column(
             children: [
               ElevatedButton(
-                  child: Text("Submeter"),
-                  onPressed: () async {
-                    try{
-                      await userRef
-                          .set({'exercise': 'flexao', 'repetitions': '20', 'interval': '60'});
-                      print("Exercicio diario escrito!");
-                    } catch (error){
-                      print("Deu o seguinte erro: $error");
-                    }
-                  },
+                child: const Text("Submeter"),
+                onPressed: () async {
+                  try{
+                    await userRef
+                        .set({'exercise': 'flexao', 'repetitions': '20', 'interval': '60'});
+                    print("Exercicio diario escrito!");
+                  } catch (error){
+                    print("Deu o seguinte erro: $error");
+                  }
+                },
               ),
             ],
           ),

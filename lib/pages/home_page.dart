@@ -1,4 +1,5 @@
 import 'package:academiaapp/common/providers/firebase_storage.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
 /*Paginas*/
@@ -29,7 +30,34 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
 
+  late String exercise = "Exercicio";
+  late String repetitions = "Repetições";
+  final _dataBaseRef = FirebaseDatabase.instance.reference();
 
+  @override
+  void initState() {
+    super.initState();
+    _getExercise();
+    _getRepetitions();
+  }
+
+  void _getExercise(){
+    _dataBaseRef.child("${widget.uid}/exercise").onValue.listen((event) {
+      final Object? description = event.snapshot.value;
+      setState(() {
+        exercise = "Exercicio: $description";
+      });
+    });
+  }
+
+  void _getRepetitions(){
+    _dataBaseRef.child("${widget.uid}/repetitions").onValue.listen((event) {
+      final Object? description = event.snapshot.value;
+      setState(() {
+        repetitions = "Repetições: $description";
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,8 +72,8 @@ class _HomePageState extends State<HomePage> {
           child: ListView(
             children: <Widget>[
               CardProvider(
-                title: const Text("Nome exercício"),
-                subtitle: const Text("Repetições: 10"),
+                title: Text(exercise),
+                subtitle: Text(repetitions),
                 onTap: (){
                   Navigator.push(
                     context,
@@ -53,7 +81,7 @@ class _HomePageState extends State<HomePage> {
                       return const DetailedExercisePage();
                     }),
                   );
-                  FirebaseStorageProvider().upload();
+
                 },
               ),
               // StreamBuilder(
