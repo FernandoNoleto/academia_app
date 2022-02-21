@@ -1,34 +1,39 @@
 import 'package:academiaapp/common/models/exercise.dart';
 
-class User{
-  final String uid;
-  final String name;
-  final Exercise exercise;
+class User {
+  String name;
+  String uid;
+  bool haveConfiguredExercises;
+  List<Exercise> exercises;
 
-  User({required this.name, required this.uid, required this.exercise});
+  User({
+    required this.name,
+    required this.uid,
+    required this.haveConfiguredExercises,
+    required this.exercises,
+  });
 
   factory User.fromJson(Map<String, dynamic> json) {
-    return User(
-      uid: json['localId'],
-      name: json['displayName'],
-      exercise: Exercise.fromJson(json['exercise']),
 
-    );
+      name: json['name'],
+      uid: json['uid'],
+      haveConfiguredExercises: json['haveConfiguredExercises'],
+      if (json['exercises'] != null) {
+        var exercisesObjJson = json['exercises'] as List;
+        List<Exercise> _exercises = exercisesObjJson.map(())
+
+      }
+
   }
 
-  Map<String, dynamic> toJson() => <String, dynamic>{
-    'name': name,
-    'uid': uid,
-    'exercise': exercise.toJson(),
-  };
-
-
-  @override
-  String toString() {
-    return 'id:${this.uid}, nome:${this.name}';
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['name'] = name;
+    data['uid'] = uid;
+    data['haveConfiguredExercises'] = haveConfiguredExercises;
+    if (exercise != null) {
+      data['exercise'] = exercise!.map((v) => v.toJson()).toList();
+    }
+    return data;
   }
-
-
-/*HOW TO PARSE TO JSON*/
-//print(jsonEncode(user.toJson()));
 }
