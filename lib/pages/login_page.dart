@@ -1,7 +1,7 @@
-import 'package:academiaapp/pages/home_page.dart';
 import 'package:flutter/material.dart';
 
 /*Pages*/
+import 'package:academiaapp/pages/home_page.dart';
 import 'package:academiaapp/pages/new_account_page.dart';
 import 'package:academiaapp/pages/forgot_password_page.dart';
 
@@ -11,6 +11,7 @@ import 'package:academiaapp/common/providers/firebase_auth_provider.dart';
 
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:firebase_database/firebase_database.dart';
 
 import '../common/models/user.dart';
 import '../common/models/exercise.dart';
@@ -29,6 +30,8 @@ class LoginPageState extends State<LoginPage> {
   TextEditingController _passwordInputController = TextEditingController();
   bool _obscurePassword = true;
 
+  final database = FirebaseDatabase.instance.ref();
+
 
   /*Functions*/
 
@@ -40,10 +43,21 @@ class LoginPageState extends State<LoginPage> {
     }
   }
 
+  _writeUserOnDatabase(User user) async{
+    final userRef = database.child('/Users/${user.uid}');
+    try{
+      await userRef.update(user.toJson());
+      print("Usuario cadastrado no bd de usuarios!");
+    } catch (error){
+      print("Deu o seguinte erro: $error");
+    }
+  }
+
 
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.blue,
@@ -133,6 +147,7 @@ class LoginPageState extends State<LoginPage> {
                             http.Response response = await _doLogin();
                             if (response.statusCode == 200){
                               User user = User.fromJson(jsonDecode(response.body));
+                              _writeUserOnDatabase(user);
                               print("User: $user");
                               Navigator.push(
                                   context,

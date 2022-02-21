@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 
+/*Models*/
+import 'package:academiaapp/common/models/exercise.dart';
+import 'package:academiaapp/common/models/user.dart';
+
+
 /*Plugins*/
-import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
+
 
 
 class SetDailyExercisesPage extends StatefulWidget {
@@ -20,6 +25,15 @@ class _SetDailyExercisesPageState extends State<SetDailyExercisesPage> {
 
     final userRef = database.child('/qnggfarRIdVN5MR9Yg2qDUADku62');
     var obj = {'exercise': 'flexao', 'repetitions': '20', 'interval': '60'};
+
+    _writeNewDailyExercise(Exercise exercise, User user) async{
+      try{
+        await userRef.update(exercise.toJson());
+        print("Exercicio diario escrito!");
+      } catch (error){
+        print("Deu o seguinte erro: $error");
+      }
+    }
 
     return Scaffold(
       appBar: AppBar(

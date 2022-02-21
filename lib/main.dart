@@ -1,3 +1,4 @@
+import 'package:academiaapp/pages/home_page_admin.dart';
 import 'package:flutter/material.dart';
 import 'package:academiaapp/pages/set_daily_exercises.dart';
 import 'package:academiaapp/pages/home_page.dart';
@@ -43,7 +44,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
       title: 'Gym App',
-      home: LoginPage(),
+      home: HomePageAdmin(),
       // home: HomePage(name: "Fernando", uid: "ID",),
       debugShowCheckedModeBanner: false,
     );

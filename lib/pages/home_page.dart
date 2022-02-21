@@ -32,6 +32,7 @@ class _HomePageState extends State<HomePage> {
 
   late String exercise = "Exercicio";
   late String repetitions = "Repetições";
+  late bool _dontHaveDailyExercise = false;
   final _dataBaseRef = FirebaseDatabase.instance.reference();
 
   @override
@@ -54,6 +55,9 @@ class _HomePageState extends State<HomePage> {
     _dataBaseRef.child("${widget.uid}/repetitions").onValue.listen((event) {
       final Object? description = event.snapshot.value;
       setState(() {
+        if (description == null || description == ""){
+          _dontHaveDailyExercise = true;
+        }
         repetitions = "Repetições: $description";
       });
     });
@@ -65,7 +69,9 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         title: Text("Bem vindo de volta ${widget.name}"),
       ),
-      body: ContainerProvider(
+      body:
+      !_dontHaveDailyExercise ?
+      ContainerProvider(
         horizontal: 10,
         vertical: 10,
         child: Center(
@@ -84,40 +90,12 @@ class _HomePageState extends State<HomePage> {
 
                 },
               ),
-              // StreamBuilder(
-              //     // stream: Firestore.instance.collection('users').snapshots,
-              //   stream: FirebaseFirestore.instance.snapshotsInSync(),
-              //     builder: (BuildContext context, AsyncSnapshot snapshot){
-              //       if(snapshot.hasError) {
-              //         return Text('Error: ${snapshot.error}');
-              //       }
-              //       else {
-              //         switch(snapshot.connectionState){
-              //           case ConnectionState.waiting:
-              //             return const LinearProgressIndicator();
-              //             break;
-              //           default: return Center(
-              //             child: ListView(
-              //                 children: snapshot.data.documents.map((DocumentSnapshot doc){
-              //                   return const ListTile(
-              //                     leading: Icon(
-              //                       Icons.people,
-              //                       size: 52,
-              //                     ),
-              //                     title: Text("teste"),
-              //                     // title: Text("Nome: ${doc.data['name']}"),
-              //                   );
-              //                 }).toList(),
-              //             ),
-              //           );
-              //         }
-              //       }
-              //     }
-              //),
             ],
           ),
         ),
-      ),
+      )
+    :
+        const Text("Primeiro login"),
     );
   }
 }
