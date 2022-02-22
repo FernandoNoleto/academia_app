@@ -1,9 +1,9 @@
+import 'package:academiaapp/common/providers/container_provider.dart';
 import 'package:flutter/material.dart';
 
 
 /*Plugins*/
 import 'dart:async';
-import 'dart:html';
 import 'package:firebase_database/firebase_database.dart';
 
 /*Providers*/
@@ -22,7 +22,7 @@ class _HomePageAdminState extends State<HomePageAdmin> {
   final _dataBaseRef = FirebaseDatabase.instance.ref();
   late StreamSubscription _srtmSubscription;
   late List listOfUsers = [];
-  late String _displayText;
+  var _displayText = "";
 
   @override
   void initState(){
@@ -49,7 +49,7 @@ class _HomePageAdminState extends State<HomePageAdmin> {
   }
 
 
-  void _activateListeners(){
+  Future _activateListeners() async {
     _srtmSubscription = _dataBaseRef.child("exerciciododia").onValue.listen((event) {
       final data = Map<String, dynamic>.from(event.snapshot.value as dynamic);
       final exercise = data['exercise'] as String;
@@ -70,8 +70,7 @@ class _HomePageAdminState extends State<HomePageAdmin> {
       body: Center(
         child: Column(
           children: <Widget>[
-            Text(_displayText, style: const TextStyle(color: Colors.blue)),
-
+            // Text(_displayText, style: const TextStyle(color: Colors.blue)),
             StreamBuilder(
               stream: _dataBaseRef.child("Users").orderByKey().limitToLast(10).onValue,
               builder: (context, snapshot){
@@ -86,6 +85,17 @@ class _HomePageAdminState extends State<HomePageAdmin> {
                     );
                     tilesList.add(userTile);
                   });
+                }
+                else{
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: const [
+                        CircularProgressIndicator(),
+                      ],
+                    ),
+                  );
                 }
                 return Expanded(
                   child: ListView(

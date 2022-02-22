@@ -1,39 +1,53 @@
 import 'package:academiaapp/common/models/exercise.dart';
 
 class User {
-  String name;
-  String uid;
-  bool haveConfiguredExercises;
-  List<Exercise> exercises;
+  final String name;
+  final String uid;
+  late bool? haveConfiguredExercises;
+  late List<Exercise>? exercises;
 
   User({
     required this.name,
     required this.uid,
-    required this.haveConfiguredExercises,
-    required this.exercises,
+    this.haveConfiguredExercises = false,
+    this.exercises = const [],
   });
 
   factory User.fromJson(Map<String, dynamic> json) {
+    if (json['exercises'] != null) {
+      var exercisesObjJson = json['exercises'] as List;
+      List<Exercise> _exercises = exercisesObjJson.map((exerciseJson) => Exercise.fromJson(exerciseJson)).toList();
 
-      name: json['name'],
-      uid: json['uid'],
-      haveConfiguredExercises: json['haveConfiguredExercises'],
-      if (json['exercises'] != null) {
-        var exercisesObjJson = json['exercises'] as List;
-        List<Exercise> _exercises = exercisesObjJson.map(())
+      print(json['displayName'] as String);
 
-      }
+      return User(
+        uid: json['localId'],
+        name: json['displayName'],
+        haveConfiguredExercises: json['haveConfiguredExercises'],
+        exercises: _exercises,
+      );
+    } else {
+      return User(
+        name: json['displayName'] ?? "",
+        uid: json['localId']?? "",
+        haveConfiguredExercises: json['haveConfiguredExercises'] ?? false,
+        exercises: [],
+      );
+    }
 
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
+    final Map<String, dynamic> data = <String, dynamic>{};
     data['name'] = name;
     data['uid'] = uid;
     data['haveConfiguredExercises'] = haveConfiguredExercises;
-    if (exercise != null) {
-      data['exercise'] = exercise!.map((v) => v.toJson()).toList();
-    }
+    data['exercise'] = exercises!.map((v) => v.toJson()).toList();
     return data;
+  }
+
+  @override
+  toString(){
+    return 'Nome: $name, uid: $uid, configExercise: $haveConfiguredExercises}';
   }
 }
