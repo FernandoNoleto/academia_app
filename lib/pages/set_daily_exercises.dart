@@ -1,3 +1,6 @@
+import 'dart:collection';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 
 /*Models*/
@@ -11,7 +14,9 @@ import 'package:firebase_database/firebase_database.dart';
 
 
 class SetDailyExercisesPage extends StatefulWidget {
-  const SetDailyExercisesPage({Key? key}) : super(key: key);
+  const SetDailyExercisesPage({Key? key, required this.localId}) : super(key: key);
+  final String localId;
+
 
   @override
   _SetDailyExercisesPageState createState() => _SetDailyExercisesPageState();
@@ -19,25 +24,37 @@ class SetDailyExercisesPage extends StatefulWidget {
 
 class _SetDailyExercisesPageState extends State<SetDailyExercisesPage> {
 
-  final database = FirebaseDatabase.instance.ref();
+
+  final dbRef = FirebaseDatabase.instance.ref();
+  // var _userId = "";
+  late Object? userObject;
+  late User user;
+
+  @override
+  void initState(){
+    super.initState();
+    _getUser(widget.localId);
+  }
+
+  void _getUser(String id) {
+    dbRef.child("Users/$id").onValue.listen((event) {
+      userObject = event.snapshot.value;
+      print("entrou no get user");
+      print(userObject);
+
+      Map<String, dynamic> json = Map<String, dynamic>.from(userObject as Map<dynamic, dynamic>);
+      print(jsonEncode(json));
+      user = User.fromJson(jsonDecode(jsonEncode(json)));
+      print(user.toString());
+    });
+    
+  }
+
   @override
   Widget build(BuildContext context) {
-
-    final userRef = database.child('/qnggfarRIdVN5MR9Yg2qDUADku62');
-    var obj = {'exercise': 'flexao', 'repetitions': '20', 'interval': '60'};
-
-    _writeNewDailyExercise(Exercise exercise, User user) async{
-      try{
-        await userRef.update(exercise.toJson());
-        print("Exercicio diario escrito!");
-      } catch (error){
-        print("Deu o seguinte erro: $error");
-      }
-    }
-
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Painel de controle"),
+        title: Text("Aluno ${user.displayName}"),
       ),
       body: Center(
         child: Padding(
@@ -46,15 +63,16 @@ class _SetDailyExercisesPageState extends State<SetDailyExercisesPage> {
             children: [
               ElevatedButton(
                 child: const Text("Submeter"),
-                onPressed: () async {
-                  try{
-                    await userRef
-                        .set({'exercise': 'flexao', 'repetitions': '20', 'interval': '60'});
-                    print("Exercicio diario escrito!");
-                  } catch (error){
-                    print("Deu o seguinte erro: $error");
-                  }
-                },
+                onPressed: () => print(widget.localId),
+                // onPressed: () async {
+                //   try{
+                //     await userRef
+                //         .set({'exercise': 'flexao', 'repetitions': '20', 'interval': '60'});
+                //     print("Exercicio diario escrito!");
+                //   } catch (error){
+                //     print("Deu o seguinte erro: $error");
+                //   }
+                // },
               ),
             ],
           ),

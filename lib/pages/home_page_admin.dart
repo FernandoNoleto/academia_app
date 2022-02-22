@@ -1,5 +1,7 @@
+import 'package:academiaapp/common/models/user.dart';
 import 'package:academiaapp/common/providers/container_provider.dart';
 import 'package:academiaapp/pages/register_exercises.dart';
+import 'package:academiaapp/pages/set_daily_exercises.dart';
 import 'package:flutter/material.dart';
 
 
@@ -29,7 +31,7 @@ class _HomePageAdminState extends State<HomePageAdmin> {
   void initState(){
     super.initState();
     // _getListOfUsers();
-    _activateListeners();
+    // _activateListeners();
     // listOfUsers = _getListOfUsers();
   }
 
@@ -81,17 +83,28 @@ class _HomePageAdminState extends State<HomePageAdmin> {
                     final nextUser = Map<String, dynamic>.from(value);
                     final userTile = ListTile(
                       leading: const Icon(Icons.account_circle),
-                      title: Text(nextUser['name']),
+                      title: Text(nextUser['displayName']),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => SetDailyExercisesPage(localId: nextUser['localId'])),
+                        );
+                      },
                     );
                     tilesList.add(userTile);
                   });
+                  // tilesList.addAll(
+                  //     myUsers.values.map((value) {
+                  //       final nextUser = User.fromJson(json)
+                  //     }),
+                  // );
                 }
                 else{
                   return Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
-                      children: const [
+                      children: const <Widget>[
                         CircularProgressIndicator(),
                       ],
                     ),

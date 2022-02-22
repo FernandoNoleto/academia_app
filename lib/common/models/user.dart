@@ -1,14 +1,14 @@
 import 'package:academiaapp/common/models/exercise.dart';
 
 class User {
-  final String name;
-  final String uid;
+  final String displayName;
+  final String localId;
   late bool? haveConfiguredExercises;
   late List<Exercise>? exercises;
 
   User({
-    required this.name,
-    required this.uid,
+    required this.displayName,
+    required this.localId,
     this.haveConfiguredExercises = false,
     this.exercises = const [],
   });
@@ -21,15 +21,15 @@ class User {
       print(json['displayName'] as String);
 
       return User(
-        uid: json['localId'],
-        name: json['displayName'],
+        localId: json['localId'],
+        displayName: json['displayName'],
         haveConfiguredExercises: json['haveConfiguredExercises'],
         exercises: _exercises,
       );
     } else {
       return User(
-        name: json['displayName'] ?? "",
-        uid: json['localId']?? "",
+        displayName: json['displayName'] ?? "",
+        localId: json['localId']?? "",
         haveConfiguredExercises: json['haveConfiguredExercises'] ?? false,
         exercises: [],
       );
@@ -39,8 +39,8 @@ class User {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['name'] = name;
-    data['uid'] = uid;
+    data['displayName'] = displayName;
+    data['localId'] = localId;
     data['haveConfiguredExercises'] = haveConfiguredExercises;
     data['exercise'] = exercises!.map((v) => v.toJson()).toList();
     return data;
@@ -48,6 +48,6 @@ class User {
 
   @override
   toString(){
-    return 'Nome: $name, uid: $uid, configExercise: $haveConfiguredExercises}';
+    return 'Nome: $displayName, uid: $localId, configExercise: $haveConfiguredExercises';
   }
 }

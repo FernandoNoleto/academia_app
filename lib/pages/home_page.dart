@@ -38,8 +38,8 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    _getExercise();
-    _getRepetitions();
+    // _getExercise();
+    // _getRepetitions();
   }
 
   void _getExercise(){

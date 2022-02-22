@@ -46,7 +46,7 @@ class LoginPageState extends State<LoginPage> {
   }
 
   _writeUserOnDatabase(User user) async{
-    final userRef = database.child('/Users/${user.uid}');
+    final userRef = database.child('/Users/${user.localId}');
     try{
       await userRef.update(user.toJson());
       print("Usuario cadastrado no bd de usuarios!");
@@ -154,7 +154,7 @@ class LoginPageState extends State<LoginPage> {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => HomePage(name: user.name!, uid: user.uid!,)
+                                      builder: (context) => HomePage(name: user.displayName!, uid: user.localId!,)
                                   )
                               );
                             } else {
