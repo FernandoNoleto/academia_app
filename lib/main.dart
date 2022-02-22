@@ -22,8 +22,9 @@ Future<void> main() async {
 
 
   // await Firebase.initializeApp();
-  // if(Firebase.apps.isEmpty){
+  // if(Firebase.apps.length == 0){
     await Firebase.initializeApp(
+      // name: "appacademia",
       options: const FirebaseOptions(
           apiKey: 'AIzaSyDNQN3CqKN52imrBElkpA2cd0bPt6JzmQw',
           appId: '1:623652127430:android:90cd8fdf32703d36118dc7',
@@ -44,6 +45,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
       title: 'Gym App',
+      // home: LoginPage(),
       home: HomePageAdmin(),
       // home: HomePage(name: "Fernando", uid: "ID",),
       debugShowCheckedModeBanner: false,

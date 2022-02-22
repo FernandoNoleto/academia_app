@@ -27,6 +27,7 @@ class _HomePageAdminState extends State<HomePageAdmin> {
   late List listOfUsers = [];
   var _displayText = "";
 
+
   @override
   void initState(){
     super.initState();
@@ -51,7 +52,6 @@ class _HomePageAdminState extends State<HomePageAdmin> {
     });
   }
 
-
   Future _activateListeners() async {
     _srtmSubscription = _dataBaseRef.child("exerciciododia").onValue.listen((event) {
       final data = Map<String, dynamic>.from(event.snapshot.value as dynamic);
@@ -64,8 +64,10 @@ class _HomePageAdminState extends State<HomePageAdmin> {
     });
   }
 
+
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("Area do administrador"),
@@ -82,8 +84,10 @@ class _HomePageAdminState extends State<HomePageAdmin> {
                   myUsers.forEach((key, value) {
                     final nextUser = Map<String, dynamic>.from(value);
                     final userTile = ListTile(
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
                       leading: const Icon(Icons.account_circle),
                       title: Text(nextUser['displayName']),
+                      tileColor: nextUser['haveConfiguredExercises'] ? Colors.green : Colors.red,
                       onTap: () {
                         Navigator.push(
                           context,

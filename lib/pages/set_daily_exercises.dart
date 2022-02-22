@@ -1,6 +1,8 @@
 import 'dart:collection';
 import 'dart:convert';
 
+import 'package:academiaapp/common/providers/card_provider.dart';
+import 'package:academiaapp/common/providers/container_provider.dart';
 import 'package:flutter/material.dart';
 
 /*Models*/
@@ -42,12 +44,12 @@ class _SetDailyExercisesPageState extends State<SetDailyExercisesPage> {
       print("entrou no get user");
       print(userObject);
 
-      Map<String, dynamic> json = Map<String, dynamic>.from(userObject as Map<dynamic, dynamic>);
-      print(jsonEncode(json));
-      user = User.fromJson(jsonDecode(jsonEncode(json)));
+      // Map<String, dynamic> json = Map<String, dynamic>.from(userObject as Map<dynamic, dynamic>);
+      // print(jsonEncode(json));
+      user = User.fromJson(jsonDecode(jsonEncode(Map<String, dynamic>.from(userObject as Map<dynamic, dynamic>))));
       print(user.toString());
     });
-    
+
   }
 
   @override
@@ -56,26 +58,46 @@ class _SetDailyExercisesPageState extends State<SetDailyExercisesPage> {
       appBar: AppBar(
         title: Text("Aluno ${user.displayName}"),
       ),
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.only(top: 15),
-          child: Column(
-            children: [
-              ElevatedButton(
-                child: const Text("Submeter"),
-                onPressed: () => print(widget.localId),
-                // onPressed: () async {
-                //   try{
-                //     await userRef
-                //         .set({'exercise': 'flexao', 'repetitions': '20', 'interval': '60'});
-                //     print("Exercicio diario escrito!");
-                //   } catch (error){
-                //     print("Deu o seguinte erro: $error");
-                //   }
-                // },
-              ),
-            ],
-          ),
+      body: ContainerProvider(
+        vertical: 10,
+        horizontal: 10,
+        child: ListView(
+          children: const [
+            CardProvider(
+              title: Text("Segunda Feira"),
+              subtitle: Text("Não configurado"),
+            ),
+            SizedBox(height: 10,),
+            CardProvider(
+              title: Text("Terça Feira"),
+              subtitle: Text("Não configurado"),
+            ),
+            SizedBox(height: 10,),
+            CardProvider(
+              title: Text("Quarta Feira"),
+              subtitle: Text("Não configurado"),
+            ),
+            SizedBox(height: 10,),
+            CardProvider(
+              title: Text("Quinta Feira"),
+              subtitle: Text("Não configurado"),
+            ),
+            SizedBox(height: 10,),
+            CardProvider(
+              title: Text("Sexta Feira"),
+              subtitle: Text("Não configurado"),
+            ),
+            SizedBox(height: 10,),
+            CardProvider(
+              title: Text("Sábado"),
+              subtitle: Text("Não configurado"),
+            ),
+            SizedBox(height: 10,),
+            CardProvider(
+              title: Text("Domingo"),
+              subtitle: Text("Não configurado"),
+            ),
+          ],
         ),
       ),
     );
