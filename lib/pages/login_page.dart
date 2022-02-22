@@ -9,10 +9,12 @@ import 'package:academiaapp/pages/forgot_password_page.dart';
 import 'package:academiaapp/common/providers/container_provider.dart';
 import 'package:academiaapp/common/providers/firebase_auth_provider.dart';
 
+/*Plugins*/
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:firebase_database/firebase_database.dart';
 
+/*Models*/
 import '../common/models/user.dart';
 import '../common/models/exercise.dart';
 
@@ -147,9 +149,6 @@ class LoginPageState extends State<LoginPage> {
                             http.Response response = await _doLogin();
                             if (response.statusCode == 200){
                               User user = User.fromJson(jsonDecode(response.body));
-                              // print(jsonDecode(response.body));
-                              // User user = User(name: "Fernando", uid: "id");
-                              // user.haveConfiguredExercises = false;
                               _writeUserOnDatabase(user);
                               // print("User: ${user.toString()}");
                               Navigator.push(

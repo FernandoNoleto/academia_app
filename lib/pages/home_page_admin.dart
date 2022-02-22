@@ -1,4 +1,5 @@
 import 'package:academiaapp/common/providers/container_provider.dart';
+import 'package:academiaapp/pages/register_exercises.dart';
 import 'package:flutter/material.dart';
 
 
@@ -70,7 +71,6 @@ class _HomePageAdminState extends State<HomePageAdmin> {
       body: Center(
         child: Column(
           children: <Widget>[
-            // Text(_displayText, style: const TextStyle(color: Colors.blue)),
             StreamBuilder(
               stream: _dataBaseRef.child("Users").orderByKey().limitToLast(10).onValue,
               builder: (context, snapshot){
@@ -106,6 +106,17 @@ class _HomePageAdminState extends State<HomePageAdmin> {
             ),
           ],
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        tooltip: "Registrar novo exercício",
+        onPressed: (){
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const RegisterExercisesPage()),
+          );
+        },
+        backgroundColor: Colors.blueAccent,
+        child: const Icon(Icons.add),
       ),
     );
   }

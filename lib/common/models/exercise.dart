@@ -1,19 +1,19 @@
 class Exercise{
-  String name; // nome do exercicios ex: flexao
-  String series; // quantidade de series ex: 3 series
-  String repetitions; // quantidade de repeticoes: 15 repeticoes
-  String interval; // intervalo de descanso em segundos ex: 30 segundos
-  String day; // dia do exercicio ex: quarta-feira
-  String linkYouTube; // link do youtube
+  final String name; // nome do exercicios ex: flexao
+  final String? series; // quantidade de series ex: 3 series
+  final String? repetitions; // quantidade de repeticoes: 15 repeticoes
+  final String? interval; // intervalo de descanso em segundos ex: 30 segundos
+  final String? day; // dia do exercicio ex: quarta-feira
+  final String linkYouTube; // link do youtube
 
 
 
   Exercise({
     required this.name,
-    required this.series,
-    required this.repetitions,
-    required this.interval,
-    required this.day,
+    this.series = "",
+    this.repetitions = "",
+    this.interval = "",
+    this.day = "",
     required this.linkYouTube,
   });
 
