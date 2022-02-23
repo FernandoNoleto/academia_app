@@ -1,0 +1,12 @@
+{
+    "name": "Fernando",
+    "uid": "uid",
+    "haveConfiguredExercises": true,
+    "day": [{
+        "name": "segunda",
+        "exercise": [{
+            "name": "flexao",
+            "link": "link"
+        }]
+    }]
+}
