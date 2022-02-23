@@ -149,16 +149,16 @@ class LoginPageState extends State<LoginPage> {
                             http.Response response = await _doLogin();
                             if (response.statusCode == 200){
                               User user = User.fromJson(jsonDecode(response.body));
-                              _writeUserOnDatabase(user);
                               // print("User: ${user.toString()}");
+                              _writeUserOnDatabase(user);
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => HomePage(name: user.displayName!, uid: user.localId!,)
+                                      builder: (context) => HomePage(name: user.displayName, uid: user.localId,)
                                   )
                               );
                             } else {
-                              throw Exception('Login invalido');
+                              throw Exception('Login inválido');
                             }
                           },
                         ),

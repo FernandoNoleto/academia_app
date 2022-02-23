@@ -5,13 +5,19 @@ class CardProvider extends StatefulWidget {
   final Widget subtitle;
   final VoidCallback? onTap;
   final Widget? logo;
+  final Color? tileColor;
+  final Color? borderColor;
+  final Widget? trailing;
 
   const CardProvider(
       {Key? key,
         required this.title,
         required this.subtitle,
         this.onTap,
-        this.logo
+        this.logo,
+        this.tileColor,
+        this.borderColor,
+        this.trailing,
       }) : super(key: key);
 
   @override
@@ -25,13 +31,19 @@ class _CardProviderState extends State<CardProvider> {
       elevation: 10,
       margin: const EdgeInsets.all(0),
       shape: RoundedRectangleBorder(
+        side: BorderSide(
+          color: widget.borderColor ?? Colors.transparent,
+          width: 1,
+        ),
         borderRadius: BorderRadius.circular(10.0),
       ),
       child: ListTile(
-        leading: widget.logo ?? const FlutterLogo(size: 72.0),
+        leading: widget.logo ?? const FlutterLogo(size: 32.0),
+        tileColor: widget.tileColor,
         title: widget.title,
         subtitle: widget.subtitle,
         onTap: widget.onTap,
+        trailing: widget.trailing,
       ),
     );
   }

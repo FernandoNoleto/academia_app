@@ -73,7 +73,7 @@ class _HomePageState extends State<HomePage> {
       !_dontHaveDailyExercise ?
       ContainerProvider(
         horizontal: 10,
-        vertical: 10,
+        vertical: 30,
         child: Center(
           child: ListView(
             children: <Widget>[

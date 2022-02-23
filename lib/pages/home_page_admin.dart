@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 
 /*Plugins*/
 import 'dart:async';
+import 'dart:convert';
 import 'package:firebase_database/firebase_database.dart';
 
 /*Providers*/
@@ -64,64 +65,73 @@ class _HomePageAdminState extends State<HomePageAdmin> {
     });
   }
 
+  _toggleHaveConfiguredExercise(User user, bool toggle) async{
+    final userRef = _dataBaseRef.child('/Users/${user.localId}');
+    try{
+      user.haveConfiguredExercises = toggle;
+      await userRef.update(user.toJson());
+      print("Usuário atualizado no bd!");
+    } catch (error){
+      print("Deu o seguinte erro: $error");
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: AppBar(
         title: const Text("Area do administrador"),
       ),
-      body: Center(
-        child: Column(
-          children: <Widget>[
-            StreamBuilder(
-              stream: _dataBaseRef.child("Users").orderByKey().limitToLast(10).onValue,
-              builder: (context, snapshot){
-                final tilesList = <ListTile>[];
-                if (snapshot.hasData) {
-                  final myUsers = (snapshot.data! as DatabaseEvent).snapshot.value as Map<Object, dynamic>;
-                  myUsers.forEach((key, value) {
-                    final nextUser = Map<String, dynamic>.from(value);
-                    final userTile = ListTile(
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-                      leading: const Icon(Icons.account_circle),
-                      title: Text(nextUser['displayName']),
-                      tileColor: nextUser['haveConfiguredExercises'] ? Colors.green : Colors.red,
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => SetDailyExercisesPage(localId: nextUser['localId'])),
-                        );
-                      },
-                    );
-                    tilesList.add(userTile);
-                  });
-                  // tilesList.addAll(
-                  //     myUsers.values.map((value) {
-                  //       final nextUser = User.fromJson(json)
-                  //     }),
-                  // );
-                }
-                else{
-                  return Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: const <Widget>[
-                        CircularProgressIndicator(),
-                      ],
-                    ),
-                  );
-                }
-                return Expanded(
-                  child: ListView(
-                    children: tilesList,
+      body: ContainerProvider(
+        vertical: 10,
+        horizontal: 10,
+        child: StreamBuilder(
+          stream: _dataBaseRef.child("Users").orderByKey().onValue,
+          builder: (context, snapshot){
+            final tilesList = <Widget>[];
+            if (snapshot.hasData) {
+              final myUsers = (snapshot.data! as DatabaseEvent).snapshot.value as Map<Object, dynamic>;
+              myUsers.forEach((key, value) {
+                final nextUser = Map<String, dynamic>.from(value);
+                final userCard = CardProvider(
+                  title: Text(nextUser['displayName']),
+                  subtitle: const Text("subtitle"),
+                  logo: const Icon(Icons.account_circle, size: 32),
+                  borderColor: nextUser['haveConfiguredExercises'] ? const Color.fromARGB(255, 34, 187, 51) : const Color.fromARGB(255, 187, 33, 36),
+                  trailing: IconButton(
+                    tooltip: "Alternar exercício configurado",
+                    icon: nextUser['haveConfiguredExercises'] ? const Icon(Icons.check) : const Icon(Icons.clear),
+                    onPressed: () {
+                      nextUser['haveConfiguredExercises'] ? _toggleHaveConfiguredExercise(User.fromJson(value), false):_toggleHaveConfiguredExercise(User.fromJson(value), true);
+                    },
                   ),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => SetDailyExercisesPage(localId: nextUser['localId'])),
+                    );
+                  },
                 );
-              },
-            ),
-          ],
+                tilesList.add(userCard);
+                tilesList.add(const SizedBox(height: 10,),);
+              });
+            }
+            else{
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: const <Widget>[
+                    CircularProgressIndicator(),
+                  ],
+                ),
+              );
+            }
+            return ListView(
+              children: tilesList,
+            );
+          },
         ),
       ),
       floatingActionButton: FloatingActionButton(
