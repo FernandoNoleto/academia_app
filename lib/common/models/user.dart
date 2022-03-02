@@ -1,37 +1,39 @@
-import 'package:academiaapp/common/models/exercise.dart';
+import 'package:academiaapp/common/models/day.dart';
 
 class User {
   final String displayName;
   final String localId;
   late bool? haveConfiguredExercises;
-  late List<Exercise>? exercises;
+  late List<Day>? days;
 
   User({
     required this.displayName,
     required this.localId,
     this.haveConfiguredExercises = false,
-    this.exercises = const [],
+    this.days = const [],
   });
 
   factory User.fromJson(Map<String, dynamic> json) {
-    if (json['exercises'] != null) {
-      var exercisesObjJson = json['exercises'] as List;
-      List<Exercise> _exercises = exercisesObjJson.map((exerciseJson) => Exercise.fromJson(exerciseJson)).toList();
+    if (json['days'] != null) {
+      var daysObjJson = json['exercises'] as List;
+      List<Day> _days = daysObjJson.map((dayJson) => Day.fromJson(dayJson)).toList();
 
-      print(json['displayName'] as String);
+      // print(json['displayName'] as String);
+      print("entrou no if");
 
       return User(
         localId: json['localId'],
         displayName: json['displayName'],
         haveConfiguredExercises: json['haveConfiguredExercises'],
-        exercises: _exercises,
+        days: _days,
       );
     } else {
+      print("entrou no else");
       return User(
         displayName: json['displayName'] ?? "",
         localId: json['localId']?? "",
         haveConfiguredExercises: json['haveConfiguredExercises'] ?? false,
-        exercises: [],
+        days: const [],
       );
     }
 
@@ -42,7 +44,7 @@ class User {
     data['displayName'] = displayName;
     data['localId'] = localId;
     data['haveConfiguredExercises'] = haveConfiguredExercises;
-    data['exercise'] = exercises!.map((v) => v.toJson()).toList();
+    data['days'] = days!.map((v) => v.toJson()).toList();
     return data;
   }
 

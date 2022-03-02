@@ -154,7 +154,7 @@ class LoginPageState extends State<LoginPage> {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => HomePage(name: user.displayName, uid: user.localId,)
+                                      builder: (context) => HomePage(name: user.displayName, localId: user.localId,)
                                   )
                               );
                             } else {

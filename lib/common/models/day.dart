@@ -1,8 +1,8 @@
 import 'package:academiaapp/common/models/exercise.dart';
 
 class Day{
-  final String name;
-  late List<Exercise>? exercises;
+  final String name; // dia da semana
+  late List<Exercise>? exercises; // array de exercícios
 
   Day({
     required this.name,
