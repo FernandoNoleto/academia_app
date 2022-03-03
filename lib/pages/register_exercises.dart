@@ -1,3 +1,4 @@
+import 'package:academiaapp/common/providers/snack_bar_provider.dart';
 import 'package:flutter/material.dart';
 
 /*Models*/
@@ -47,7 +48,7 @@ class _RegisterExercisesPageState extends State<RegisterExercisesPage> {
         vertical: 30,
         child: SingleChildScrollView(
           child: Column(
-            children: [
+            children: <Widget>[
               Form(
                 key: _formKey,
                 child: Column(
@@ -118,6 +119,7 @@ class _RegisterExercisesPageState extends State<RegisterExercisesPage> {
                               // print("nome: ${_nameInputController.text}");
                               // print("link: ${_linkInputController.text}");
                               _writeExerciseOnDatabse(exercise);
+                              ScaffoldMessenger.of(context).showSnackBar(SnackBarProvider().showExerciseConfirmAlert(_nameInputController.text));
                             }
                           },
                         ),

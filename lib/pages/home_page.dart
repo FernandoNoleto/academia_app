@@ -198,23 +198,21 @@ class _HomePageState extends State<HomePage> {
               ContainerProvider(
                 horizontal: 10,
                 vertical: 30,
-                child: Center(
-                  child: ListView(
-                    children: <Widget>[
-                      CardProvider(
-                        title: Text(exercise),
-                        subtitle: Text(repetitions),
-                        onTap: (){
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) {
-                              return const DetailedExercisePage();
-                            }),
-                          );
-                        },
-                      ),
-                    ],
-                  ),
+                child: ListView(
+                  children: <Widget>[
+                    CardProvider(
+                      title: Text(exercise),
+                      subtitle: Text(repetitions),
+                      onTap: (){
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) {
+                            return const DetailedExercisePage();
+                          }),
+                        );
+                      },
+                    ),
+                  ],
                 ),
               )
                   :

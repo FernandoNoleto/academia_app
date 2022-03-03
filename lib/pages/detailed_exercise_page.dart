@@ -29,26 +29,41 @@ class _DetailedExercisePageState extends State<DetailedExercisePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Nome do exercicio'),
+        title: const Text('Detalhes do Exercício'),
       ),
-      body: SingleChildScrollView(
-          child: ContainerProvider(
-            horizontal: 10,
-            vertical: 30,
-            child: Column(
-              children: <Widget>[
-                const CardProvider(
-                    title: Text("Nome exercicio"),
-                    subtitle: Text("Repetições")
+      body: ContainerProvider(
+        horizontal: 10,
+        vertical: 10,
+        child: SingleChildScrollView(
+          child: Column(
+            children: <Widget> [
+              const Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  "Nome do exercicio",
+                  style: TextStyle(
+                    fontSize: 30,
+                  ),
                 ),
-                const SizedBox(height: 10),
-                YoutubePlayer(
-                  controller: YoutubeProvider().youtubePlayerController('hwf01VTWMCo'),
-                  liveUIColor: Colors.amber,
+              ),
+              const SizedBox(height: 10,),
+              YoutubePlayer(
+                controller: YoutubeProvider().youtubePlayerController('hwf01VTWMCo'),
+                liveUIColor: Colors.amber,
+              ),
+              const SizedBox(height: 5,),
+              const Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  "Vídeo explicativo do exercício:",
+                  style: TextStyle(
+                    fontSize: 15,
+                  ),
                 ),
-              ],
-            ),
-          )
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
