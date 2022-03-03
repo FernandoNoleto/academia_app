@@ -1,8 +1,8 @@
-import 'dart:collection';
 import 'dart:convert';
 
 import 'package:academiaapp/common/providers/card_provider.dart';
 import 'package:academiaapp/common/providers/container_provider.dart';
+import 'package:academiaapp/common/providers/firebase_storage.dart';
 import 'package:flutter/material.dart';
 
 /*Models*/
@@ -33,28 +33,38 @@ class _SetDailyExercisesPageState extends State<SetDailyExercisesPage> {
 
   final dbRef = FirebaseDatabase.instance.ref();
   late Object? userObject;
+  late Object? exerciseObject;
   late User user;
-  String dropdownValue = 'One';
+  late Exercise exercise;
+  List<String> listOfExercises = [];
+  String dropdownValue = '';
 
 
   @override
   void initState(){
     super.initState();
     _getUser(widget.localId);
+    listOfExercises = FirebaseStorageProvider().getExercises();
+    dropdownValue = listOfExercises.first;
   }
 
   void _getUser(String id) {
     dbRef.child("Users/$id").onValue.listen((event) {
       userObject = event.snapshot.value;
-      print("entrou no get user");
-      print(userObject);
-
-      // Map<String, dynamic> json = Map<String, dynamic>.from(userObject as Map<dynamic, dynamic>);
-      // print(jsonEncode(json));
+      // print(userObject);
       user = User.fromJson(jsonDecode(jsonEncode(Map<String, dynamic>.from(userObject as Map<dynamic, dynamic>))));
-      print(user.toString());
     });
 
+  }
+
+  void _writeExerciseForUser(Exercise exercise) async {
+    final userRef = dbRef.child('/Users/${widget.localId}');
+    try{
+      await userRef.update(exercise.toJson());
+      print("Exercicio cadastrado no bd de exercicios!");
+    } catch (error){
+      print("Deu o seguinte erro: $error");
+    }
   }
 
   @override
@@ -86,27 +96,31 @@ class _SetDailyExercisesPageState extends State<SetDailyExercisesPage> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             mainAxisSize: MainAxisSize.max,
                             children: <Widget>[
-                              DropdownButton<String>(
-                                value: dropdownValue,
-                                icon: const Icon(Icons.arrow_downward),
-                                elevation: 16,
-                                style: const TextStyle(color: Colors.deepPurple),
-                                underline: Container(
-                                  height: 2,
-                                  color: Colors.deepPurpleAccent,
-                                ),
-                                onChanged: (String? newValue) {
-                                  setState(() {
-                                    dropdownValue = newValue!;
-                                  });
-                                },
-                                items: <String>['One', 'Two', 'Free', 'Four']
-                                    .map<DropdownMenuItem<String>>((String value) {
-                                  return DropdownMenuItem<String>(
-                                    value: value,
-                                    child: Text(value),
+                              StatefulBuilder(
+                                builder: (BuildContext context, void Function(void Function()) setState) {
+                                  return DropdownButton<String>(
+                                    value: dropdownValue,
+                                    icon: const Icon(Icons.arrow_downward),
+                                    elevation: 16,
+                                    style: const TextStyle(color: Colors.deepPurple),
+                                    underline: Container(
+                                      height: 2,
+                                      color: Colors.deepPurpleAccent,
+                                    ),
+                                    onChanged: (String? newValue) {
+                                      setState(() {
+                                        dropdownValue = newValue!;
+                                        print(newValue);
+                                      });
+                                    },
+                                    items: listOfExercises.map<DropdownMenuItem<String>>((String value) {
+                                      return DropdownMenuItem<String>(
+                                        value: value,
+                                        child: Text(value),
+                                      );
+                                    }).toList(),
                                   );
-                                }).toList(),
+                                },
                               ),
                               const SizedBox(height: 10,),
                               Form(
@@ -130,7 +144,7 @@ class _SetDailyExercisesPageState extends State<SetDailyExercisesPage> {
                                         EdgeInsets.only(bottom: 10.0, left: 10.0, right: 10.0),
                                         labelText: "Repetições",
                                         prefixIcon: Icon(
-                                          Icons.mail_outline,
+                                          Icons.repeat_outlined,
                                           color: Colors.blue,
                                         ),
                                       ),
@@ -147,8 +161,8 @@ class _SetDailyExercisesPageState extends State<SetDailyExercisesPage> {
                                       decoration: const InputDecoration(
                                         hintText: 'Insira o intervalo',
                                         focusedBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                                            borderSide: BorderSide(color: Colors.blue)
+                                          borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                                          borderSide: BorderSide(color: Colors.blue),
 
                                         ),
                                         filled: true,
@@ -156,7 +170,27 @@ class _SetDailyExercisesPageState extends State<SetDailyExercisesPage> {
                                         EdgeInsets.only(bottom: 10.0, left: 10.0, right: 10.0),
                                         labelText: "Intervalo",
                                         prefixIcon: Icon(
-                                          Icons.vpn_key_sharp,
+                                          Icons.pause_outlined,
+                                          color: Colors.blue,
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 10,),
+                                    TextFormField(
+                                      controller: _seriesInputController,
+                                      decoration: const InputDecoration(
+                                        hintText: 'Insira o número de séries',
+                                        focusedBorder: OutlineInputBorder(
+                                          borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                                          borderSide: BorderSide(color: Colors.blue),
+
+                                        ),
+                                        filled: true,
+                                        contentPadding:
+                                        EdgeInsets.only(bottom: 10.0, left: 10.0, right: 10.0),
+                                        labelText: "Séries",
+                                        prefixIcon: Icon(
+                                          Icons.linear_scale_outlined,
                                           color: Colors.blue,
                                         ),
                                       ),
@@ -167,7 +201,14 @@ class _SetDailyExercisesPageState extends State<SetDailyExercisesPage> {
                               const SizedBox(height: 10,),
                               ElevatedButton(
                                 child: const Text('Ok'),
-                                onPressed: () => Navigator.pop(context),
+                                onPressed: () {
+                                  // Exercise exercise = Exercise(
+                                  //     name: name,
+                                  //     linkYouTube: linkYouTube
+                                  // ),
+                                  // _writeExerciseOnDatabse();
+                                  Navigator.pop(context);
+                                },
                               ),
                             ],
                           ),

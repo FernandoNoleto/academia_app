@@ -19,7 +19,6 @@ class User {
       List<Day> _days = daysObjJson.map((dayJson) => Day.fromJson(dayJson)).toList();
 
       // print(json['displayName'] as String);
-      print("entrou no if");
 
       return User(
         localId: json['localId'],
@@ -28,7 +27,6 @@ class User {
         days: _days,
       );
     } else {
-      print("entrou no else");
       return User(
         displayName: json['displayName'] ?? "",
         localId: json['localId']?? "",

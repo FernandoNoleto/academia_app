@@ -1,3 +1,5 @@
+import 'package:firebase_database/firebase_database.dart';
+
 class Exercise{
   final String name; // nome do exercicios ex: flexao
   final String? series; // quantidade de series ex: 3 series
@@ -27,6 +29,17 @@ class Exercise{
       linkYouTube: json['linkYouTube'] ?? "",
     );
   }
+
+
+  // Exercise.fromSnapshot(DataSnapshot snapshot) :
+  //       name = snapshot.value!["name"],
+  //       series = snapshot.value!["series"],
+  //       repetitions = snapshot.value!["repetitions"],
+  //       interval = snapshot.value!["interval"],
+  //       day = snapshot.value!["day"],
+  //       linkYouTube = snapshot.value!["linkYouTube"];
+
+
 
 
   Map<String, dynamic> toJson() => <String, dynamic>{

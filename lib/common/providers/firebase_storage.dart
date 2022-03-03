@@ -1,27 +1,26 @@
+import 'dart:convert';
+
+import 'package:academiaapp/common/models/exercise.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
-// import 'package:firebase_core/firebase_core.dart' as firebase_core;
 
 
 class FirebaseStorageProvider{
 
+  List<String> getExercises(){
 
-
-  void upload (String PATH){
-
-  }
-
-  Future<String> readData(String PATH) async{
-
-    String data = "string padrao";
-    final _dataBaseRef = FirebaseDatabase.instance.reference();
-
-    _dataBaseRef.child(PATH).onValue.listen((event) {
-      final Object? obj = event.snapshot.value;
-      data = "Dado $obj";
+    List<String> exercises = [];
+    late Exercise exercise;
+    FirebaseDatabase.instance.ref().child("Exercises").onValue.listen((event) {
+      final description = event.snapshot.children;
+      for (var element in description) {
+        exercise = Exercise.fromJson(jsonDecode(jsonEncode(Map<String, dynamic>.from(element.value as Map<dynamic, dynamic>))));
+        print(exercise.name);
+        exercises.add(exercise.name);
+      }
     });
 
-    print("data: $data");
-    return data;
+    return exercises;
   }
+
 }
