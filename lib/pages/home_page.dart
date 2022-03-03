@@ -46,7 +46,17 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    _getUser(widget.localId);
+
+    _dataBaseRef.child("Users/${widget.localId}").onValue.listen((event) {
+      userObject = event.snapshot.value;
+      print("entrou no get user");
+      print(userObject);
+
+      user = User.fromJson(jsonDecode(jsonEncode(Map<String, dynamic>.from(userObject as Map<dynamic, dynamic>))));
+      print(user.toString());
+    });
+
+
     print(_getHaveDailyExercise());
     // _getExercise();
     // _getRepetitions();
@@ -67,19 +77,19 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  void _getUser(String id) {
-    _dataBaseRef.child("Users/$id").onValue.listen((event) {
-      userObject = event.snapshot.value;
-      print("entrou no get user");
-      print(userObject);
-
-      // Map<String, dynamic> json = Map<String, dynamic>.from(userObject as Map<dynamic, dynamic>);
-      // print(jsonEncode(json));
-      user = User.fromJson(jsonDecode(jsonEncode(Map<String, dynamic>.from(userObject as Map<dynamic, dynamic>))));
-      print(user.toString());
-    });
-
-  }
+  // void _getUser(String id) {
+  //   _dataBaseRef.child("Users/$id").onValue.listen((event) {
+  //     userObject = event.snapshot.value;
+  //     print("entrou no get user");
+  //     print(userObject);
+  //
+  //     // Map<String, dynamic> json = Map<String, dynamic>.from(userObject as Map<dynamic, dynamic>);
+  //     // print(jsonEncode(json));
+  //     user = User.fromJson(jsonDecode(jsonEncode(Map<String, dynamic>.from(userObject as Map<dynamic, dynamic>))));
+  //     print(user.toString());
+  //   });
+  //
+  // }
 
   bool _getHaveDailyExercise(){
     print("${user.haveConfiguredExercises}");
@@ -120,96 +130,98 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
       ),
-      body:
-      ListView(
-        children: <Widget>[
-          Container(
-            margin: const EdgeInsets.all(10),
-            width: MediaQuery.of(context).size.width,
-            height: 250,
-            decoration: const BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage('images/exercise-icon.png'),
-                fit: BoxFit.fitWidth,
-              ),
-            ),
-            child: Column(
-              children: <Widget>[
-                const SizedBox(height: 100,),
-                Column(
+      body: ContainerProvider(
+        vertical: 10,
+        horizontal: 10,
+        child: SingleChildScrollView(
+          child: Column(
+            children: <Widget>[
+              Container(
+                margin: const EdgeInsets.all(10),
+                width: MediaQuery.of(context).size.width,
+                height: 210,
+                decoration: const BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage('images/exercise-icon.png'),
+                    fit: BoxFit.fitWidth,
+                  ),
+                ),
+                child: Column(
                   children: <Widget>[
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Colors.transparent.withOpacity(0.5),
-                        borderRadius: const BorderRadius.only(
-                          topLeft: Radius.circular(10),
-                          topRight: Radius.circular(10),
+                    const SizedBox(height: 50,),
+                    Column(
+                      children: <Widget>[
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Colors.transparent.withOpacity(0.5),
+                            borderRadius: const BorderRadius.only(
+                              topLeft: Radius.circular(10),
+                              topRight: Radius.circular(10),
+                            ),
+                          ),
+                          child: const Text("Exercício de",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 15,
+                            ),
+                            strutStyle: StrutStyle(
+                              fontSize: 16.0,
+                              height: 1.8,
+                            ),
+                          ),
                         ),
-                      ),
-                      child: const Text("Exercício de",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 15,
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Colors.transparent.withOpacity(0.5),
+                            borderRadius: const BorderRadius.all(Radius.circular(10)),
+                          ),
+                          child: Text(_getDayOfWeek(),
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 35,
+                            ),
+                            strutStyle: const StrutStyle(
+                              fontSize: 16.0,
+                              height: 1.8,
+                            ),
+                          ),
                         ),
-                        strutStyle: StrutStyle(
-                          fontSize: 16.0,
-                          height: 1.8,
-                        ),
-                      ),
-                    ),
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Colors.transparent.withOpacity(0.5),
-                        borderRadius: const BorderRadius.only(
-                          bottomLeft: Radius.circular(10),
-                          bottomRight: Radius.circular(10),
-                        ),
-                      ),
-                      child: Text(_getDayOfWeek(),
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 35,
-                        ),
-                        strutStyle: const StrutStyle(
-                          fontSize: 16.0,
-                          height: 1.8,
-                        ),
-                      ),
+                      ],
                     ),
                   ],
+
                 ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 10,),
-          true ?
-          ContainerProvider(
-            horizontal: 10,
-            vertical: 30,
-            child: Center(
-              child: ListView(
-                children: <Widget>[
-                  CardProvider(
-                    title: Text(exercise),
-                    subtitle: Text(repetitions),
-                    onTap: (){
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) {
-                          return const DetailedExercisePage();
-                        }),
-                      );
-                    },
-                  ),
-                ],
               ),
-            ),
-          )
-              :
-          const Text("Primeiro login"),
-        ],
+              true ?
+              ContainerProvider(
+                horizontal: 10,
+                vertical: 30,
+                child: Center(
+                  child: ListView(
+                    children: <Widget>[
+                      CardProvider(
+                        title: Text(exercise),
+                        subtitle: Text(repetitions),
+                        onTap: (){
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) {
+                              return const DetailedExercisePage();
+                            }),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              )
+                  :
+              const Text("Primeiro login"),
+            ],
+          ),
+        ),
       ),
     );
   }
