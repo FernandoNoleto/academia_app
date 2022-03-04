@@ -28,7 +28,7 @@ class _CardProviderState extends State<CardProvider> {
   @override
   Widget build(BuildContext context) {
     return Card(
-      elevation: 10,
+      elevation: 2,
       margin: const EdgeInsets.all(0),
       shape: RoundedRectangleBorder(
         side: BorderSide(

@@ -1,3 +1,5 @@
+import 'dart:html';
+
 import 'package:flutter/material.dart';
 
 /*Paginas*/
@@ -37,29 +39,22 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
 
   late Object? userObject;
+  late Object? exercisesObject;
   late User user;
   late String exercise = "Exercicio";
   late String repetitions = "Repetições";
-  late bool _haveDailyExercise = false;
   final _dataBaseRef = FirebaseDatabase.instance.ref();
 
   @override
   void initState() {
     super.initState();
 
-    _dataBaseRef.child("Users/${widget.localId}").onValue.listen((event) {
+    _dataBaseRef.child("Users/${widget.localId}").onValue.listen((event) async {
       userObject = event.snapshot.value;
       // print("entrou no get user");
       // print(userObject);
-
       user = User.fromJson(jsonDecode(jsonEncode(Map<String, dynamic>.from(userObject as Map<dynamic, dynamic>))));
-      print(user.toString());
     });
-
-
-    print(_getHaveDailyExercise());
-    // _getExercise();
-    // _getRepetitions();
   }
 
   String _getDayOfWeek(){
@@ -75,53 +70,6 @@ class _HomePageState extends State<HomePage> {
       case "Sunday": return "Domingo"; break;
       default: return "Não foi possível obter qual dia é hoje"; break;
     }
-  }
-
-  // void _getUser(String id) {
-  //   _dataBaseRef.child("Users/$id").onValue.listen((event) {
-  //     userObject = event.snapshot.value;
-  //     print("entrou no get user");
-  //     print(userObject);
-  //
-  //     // Map<String, dynamic> json = Map<String, dynamic>.from(userObject as Map<dynamic, dynamic>);
-  //     // print(jsonEncode(json));
-  //     user = User.fromJson(jsonDecode(jsonEncode(Map<String, dynamic>.from(userObject as Map<dynamic, dynamic>))));
-  //     print(user.toString());
-  //   });
-  //
-  // }
-
-  bool _getHaveDailyExercise(){
-    print("${user.haveConfiguredExercises}");
-    return user.haveConfiguredExercises ?? false;
-  }
-
-  void _getExercise() async {
-    // _dataBaseRef.child("${widget.localId}/exercise").onValue.listen((event) {
-    //   final Object? description = event.snapshot.value;
-    //   setState(() {
-    //     exercise = "Exercicio: $description";
-    //   });
-    // });
-    final userRef = _dataBaseRef.child('/Users/${widget.localId}/Exerciciododia/${_getDayOfWeek()}');
-    try{
-      // await userRef.update(exercise.toJson());
-      print("Exercicio cadastrado no bd do usuário!");
-    } catch (error){
-      print("Deu o seguinte erro: $error");
-    }
-  }
-
-  void _getRepetitions(){
-    _dataBaseRef.child("${widget.localId}/repetitions").onValue.listen((event) {
-      final Object? description = event.snapshot.value;
-      setState(() {
-        if (description == null || description == ""){
-          _haveDailyExercise = false;
-        }
-        repetitions = "Repetições: $description";
-      });
-    });
   }
 
   @override
@@ -198,28 +146,53 @@ class _HomePageState extends State<HomePage> {
                       ],
                     ),
                   ],
-
                 ),
               ),
               true ?
+              // AQUI VAI A RECUPERAÇÃO DA LISTA DE EXERCICIOS DO DIA
+              // ----------------------------------------------------
               ContainerProvider(
                 horizontal: 10,
                 vertical: 30,
-                child: ListView(
-                  children: <Widget>[
-                    CardProvider(
-                      title: Text(exercise),
-                      subtitle: Text(repetitions),
-                      onTap: (){
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) {
-                            return const DetailedExercisePage();
-                          }),
+                child: StreamBuilder(
+                  stream: _dataBaseRef.child("Users/${widget.localId}/Exerciciododia/${_getDayOfWeek()}").orderByKey().onValue,
+                  builder: (context, snapshot){
+                    final tilesList = <Widget>[];
+                    if (snapshot.hasData) {
+                      final myExercises = (snapshot.data! as DatabaseEvent).snapshot.value as Map<Object, dynamic>;
+                      myExercises.forEach((key, value) {
+                        final nextExercise = Map<String, dynamic>.from(value);
+                        final exerciseCard = CardProvider(
+                          title: Text(nextExercise['name']),
+                          subtitle: Text("Repetições:" +nextExercise['repetitions']),
+                          logo: const Icon(Icons.account_circle, size: 32),
+                          // borderColor: nextExercise['haveConfiguredExercises'] ? const Color.fromARGB(255, 34, 187, 51) : const Color.fromARGB(255, 187, 33, 36),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => DetailedExercisePage(name: nextExercise['name'])),
+                            );
+                          },
                         );
-                      },
-                    ),
-                  ],
+                        tilesList.add(exerciseCard);
+                        tilesList.add(const SizedBox(height: 10,),);
+                      });
+                    }
+                    else{
+                      return Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: const <Widget>[
+                            CircularProgressIndicator(),
+                          ],
+                        ),
+                      );
+                    }
+                    return ListView(
+                      children: tilesList,
+                    );
+                  },
                 ),
               )
                   :

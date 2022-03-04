@@ -1,29 +1,46 @@
 import 'package:flutter/material.dart';
 
 /*Dependencies*/
+import 'package:firebase_database/firebase_database.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
-// import 'package:url_launcher/url_launcher.dart';
-// import 'package:firebase_auth/firebase_auth.dart';
-// import 'package:firebase_core/firebase_core.dart';
-// import 'package:cloud_firestore/cloud_firestore.dart';
-// import 'firebase_options.dart';
+import 'dart:convert';
 
 /*Providers*/
 import 'package:academiaapp/common/providers/youtube_player_provider.dart';
 import 'package:academiaapp/common/providers/card_provider.dart';
 import 'package:academiaapp/common/providers/container_provider.dart';
 
-
+/*Model*/
+import 'package:academiaapp/common/models/exercise.dart';
 
 
 class DetailedExercisePage extends StatefulWidget {
-  const DetailedExercisePage({Key? key}) : super(key: key);
+  final String name;
+  const DetailedExercisePage({Key? key, required this.name}) : super(key: key);
 
   @override
   _DetailedExercisePageState createState() => _DetailedExercisePageState();
 }
 
 class _DetailedExercisePageState extends State<DetailedExercisePage> {
+
+  final dbRef = FirebaseDatabase.instance.ref();
+  late Object? exerciseObject;
+  late Exercise exercise;
+  String link = "";
+
+  @override
+  void initState(){
+    super.initState();
+    dbRef.child("Exercises/${widget.name}").onValue.listen((event) {
+      exerciseObject = event.snapshot.value;
+      exercise = Exercise.fromJson(jsonDecode(jsonEncode(Map<String, dynamic>.from(exerciseObject as Map<dynamic, dynamic>))));
+      var arr = exercise.linkYouTube.split("=");
+      link = arr[1];// dividir o link do YT onde tem o '=' e pegar somente a segunda parte
+      print("Link splitado: "+link);
+    });
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -37,18 +54,17 @@ class _DetailedExercisePageState extends State<DetailedExercisePage> {
         child: SingleChildScrollView(
           child: Column(
             children: <Widget> [
-              const Align(
+              Align(
                 alignment: Alignment.centerLeft,
-                child: Text(
-                  "Nome do exercicio",
-                  style: TextStyle(
+                child: Text(widget.name,
+                  style: const TextStyle(
                     fontSize: 30,
                   ),
                 ),
               ),
               const SizedBox(height: 10,),
               YoutubePlayer(
-                controller: YoutubeProvider().youtubePlayerController('hwf01VTWMCo'),
+                controller: YoutubeProvider().youtubePlayerController(link),
                 liveUIColor: Colors.amber,
               ),
               const SizedBox(height: 5,),
@@ -68,32 +84,3 @@ class _DetailedExercisePageState extends State<DetailedExercisePage> {
     );
   }
 }
-
-
-// Container(
-// height: MediaQuery.of(context).size.height,
-// padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 30),
-// decoration: const BoxDecoration(
-// gradient: LinearGradient(
-// begin: Alignment.topCenter,
-// end: Alignment.bottomCenter,
-// colors: [
-// Colors.white,
-// Colors.white70,
-// ],
-// ),
-// ),
-// child: Column(
-// children: <Widget>[
-// const CardProvider(
-// title: Text("Nome exercicio"),
-// subtitle: Text("Repetições")
-// ),
-// const SizedBox(height: 10),
-// YoutubePlayer(
-// controller: YoutubeProvider().youtubePlayerController('hwf01VTWMCo'),
-// liveUIColor: Colors.amber,
-// ),
-// ],
-// ),
-// ),

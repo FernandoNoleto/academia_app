@@ -107,7 +107,7 @@ class _RegisterExercisesPageState extends State<RegisterExercisesPage> {
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 16.0),
                       child: FractionallySizedBox(
-                        widthFactor: 1, // means 100%, you can change this to 0.8 (80%)
+                        widthFactor: 1,
                         child: ElevatedButton(
                           child: const Text("Registrar"),
                           onPressed: () {
@@ -116,8 +116,6 @@ class _RegisterExercisesPageState extends State<RegisterExercisesPage> {
                                 name: _nameInputController.text,
                                 linkYouTube: _linkInputController.text,
                               );
-                              // print("nome: ${_nameInputController.text}");
-                              // print("link: ${_linkInputController.text}");
                               _writeExerciseOnDatabse(exercise);
                               ScaffoldMessenger.of(context).showSnackBar(SnackBarProvider().showExerciseConfirmAlert(_nameInputController.text));
                             }
