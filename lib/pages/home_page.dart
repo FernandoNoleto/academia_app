@@ -52,6 +52,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
       user = User.fromJson(jsonDecode(jsonEncode(Map<String, dynamic>.from(userObject as Map<dynamic, dynamic>))));
     });
 
+    _dataBaseRef.child("Users/${widget.localId}/Exerciciododia").onValue.listen((event) async {
+      isDailyExerciseConfigured = event.snapshot.exists;
+    });
+
     controller = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 3),
@@ -167,7 +171,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
                   stream: _dataBaseRef.child("Users/${widget.localId}/Exerciciododia/${_getDayOfWeek()}").orderByKey().onValue,
                   builder: (context, snapshot){
                     final tilesList = <Widget>[];
-                    if (snapshot.hasData) {
+                    if (snapshot.hasData && isDailyExerciseConfigured) {
                       print("tem dados");
                       final myExercises = (snapshot.data! as DatabaseEvent).snapshot.value as Map<Object, dynamic>;
                       myExercises.forEach((key, value) {
@@ -187,9 +191,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
                         tilesList.add(exerciseCard);
                         tilesList.add(const SizedBox(height: 10,),);
                       });
-                      return CircularProgressIndicator(
-                        value: controller.value,
-                      );
                     }
                     else{
                       print("nao tem dados");
@@ -197,11 +198,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
-                          children: <Widget>[
-                            CircularProgressIndicator(
-                              value: controller.value,
-                            ),
-                            const Text(
+                          children: const <Widget>[
+                            Text(
                               "Seu personal não passou exercícios para este dia",
                               style: TextStyle(
                                 fontSize: 28,

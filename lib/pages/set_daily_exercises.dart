@@ -48,12 +48,13 @@ class _SetDailyExercisesPageState extends State<SetDailyExercisesPage> {
     _getUser(widget.localId);
     listOfExercises = FirebaseStorageProvider().getExercises();
     // aqui está o erro
-    if (listOfExercises.isNotEmpty){
-      dropdownValue = listOfExercises.first;
-    }
-    else{
-      dropdownValue = " ";
-    }
+    dropdownValue = listOfExercises.first;
+    // if (listOfExercises.isNotEmpty){
+    //   dropdownValue = listOfExercises.first;
+    // }
+    // else{
+    //   dropdownValue = " ";
+    // }
   }
 
   void _getUser(String id) {
