@@ -49,8 +49,8 @@ class _HomePageState extends State<HomePage> {
 
     _dataBaseRef.child("Users/${widget.localId}").onValue.listen((event) {
       userObject = event.snapshot.value;
-      print("entrou no get user");
-      print(userObject);
+      // print("entrou no get user");
+      // print(userObject);
 
       user = User.fromJson(jsonDecode(jsonEncode(Map<String, dynamic>.from(userObject as Map<dynamic, dynamic>))));
       print(user.toString());
@@ -73,7 +73,7 @@ class _HomePageState extends State<HomePage> {
       case "Friday": return "Sexta-Feira"; break;
       case "Saturday": return "Sábado"; break;
       case "Sunday": return "Domingo"; break;
-      default: return "Não foi possível pegar qual dia é hoje"; break;
+      default: return "Não foi possível obter qual dia é hoje"; break;
     }
   }
 
@@ -96,13 +96,20 @@ class _HomePageState extends State<HomePage> {
     return user.haveConfiguredExercises ?? false;
   }
 
-  void _getExercise(){
-    _dataBaseRef.child("${widget.localId}/exercise").onValue.listen((event) {
-      final Object? description = event.snapshot.value;
-      setState(() {
-        exercise = "Exercicio: $description";
-      });
-    });
+  void _getExercise() async {
+    // _dataBaseRef.child("${widget.localId}/exercise").onValue.listen((event) {
+    //   final Object? description = event.snapshot.value;
+    //   setState(() {
+    //     exercise = "Exercicio: $description";
+    //   });
+    // });
+    final userRef = _dataBaseRef.child('/Users/${widget.localId}/Exerciciododia/${_getDayOfWeek()}');
+    try{
+      // await userRef.update(exercise.toJson());
+      print("Exercicio cadastrado no bd do usuário!");
+    } catch (error){
+      print("Deu o seguinte erro: $error");
+    }
   }
 
   void _getRepetitions(){

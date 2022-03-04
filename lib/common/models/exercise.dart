@@ -16,7 +16,7 @@ class Exercise{
     this.repetitions = "",
     this.interval = "",
     this.day = "",
-    required this.linkYouTube,
+    this.linkYouTube = "",
   });
 
   factory Exercise.fromJson(Map<String, dynamic> json) {

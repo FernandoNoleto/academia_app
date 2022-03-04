@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:academiaapp/common/providers/card_provider.dart';
 import 'package:academiaapp/common/providers/container_provider.dart';
 import 'package:academiaapp/common/providers/firebase_storage.dart';
+import 'package:academiaapp/common/providers/set_exercise_form_provider.dart';
 import 'package:flutter/material.dart';
 
 /*Models*/
@@ -38,6 +39,7 @@ class _SetDailyExercisesPageState extends State<SetDailyExercisesPage> {
   late Exercise exercise;
   List<String> listOfExercises = [];
   String dropdownValue = '';
+  String day = "";
 
 
   @override
@@ -57,11 +59,11 @@ class _SetDailyExercisesPageState extends State<SetDailyExercisesPage> {
 
   }
 
-  void _writeExerciseForUser(Exercise exercise) async {
-    final userRef = dbRef.child('/Users/${widget.localId}');
+  void _writeExerciseForUser(Exercise exercise, day) async {
+    final userRef = dbRef.child('/Users/${widget.localId}/Exerciciododia/$day/${exercise.name}');
     try{
       await userRef.update(exercise.toJson());
-      print("Exercicio cadastrado no bd de exercicios!");
+      print("Exercicio cadastrado no bd do usuário!");
     } catch (error){
       print("Deu o seguinte erro: $error");
     }
@@ -123,90 +125,27 @@ class _SetDailyExercisesPageState extends State<SetDailyExercisesPage> {
                                 },
                               ),
                               const SizedBox(height: 10,),
-                              Form(
-                                key: _formKey,
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: <Widget>[
-                                    const SizedBox(height: 10),
-                                    TextFormField(
-                                      controller: _repetitionsInputController,
-                                      autofocus: true,
-                                      decoration: const InputDecoration(
-                                        hintText: 'Quantidade de repetições',
-                                        focusedBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                                            borderSide: BorderSide(color: Colors.blue)
-                                        ),
-                                        filled: true,
-                                        contentPadding:
-                                        EdgeInsets.only(bottom: 10.0, left: 10.0, right: 10.0),
-                                        labelText: "Repetições",
-                                        prefixIcon: Icon(
-                                          Icons.repeat_outlined,
-                                          color: Colors.blue,
-                                        ),
-                                      ),
-                                      validator: (String? repetitions) {
-                                        if (repetitions == null || repetitions.isEmpty) {
-                                          return 'Numero inválido';
-                                        }
-                                        return null;
-                                      },
-                                    ),
-                                    const SizedBox(height: 10),
-                                    TextFormField(
-                                      controller: _intervalInputController,
-                                      decoration: const InputDecoration(
-                                        hintText: 'Insira o intervalo',
-                                        focusedBorder: OutlineInputBorder(
-                                          borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                                          borderSide: BorderSide(color: Colors.blue),
-
-                                        ),
-                                        filled: true,
-                                        contentPadding:
-                                        EdgeInsets.only(bottom: 10.0, left: 10.0, right: 10.0),
-                                        labelText: "Intervalo",
-                                        prefixIcon: Icon(
-                                          Icons.pause_outlined,
-                                          color: Colors.blue,
-                                        ),
-                                      ),
-                                    ),
-                                    const SizedBox(height: 10,),
-                                    TextFormField(
-                                      controller: _seriesInputController,
-                                      decoration: const InputDecoration(
-                                        hintText: 'Insira o número de séries',
-                                        focusedBorder: OutlineInputBorder(
-                                          borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                                          borderSide: BorderSide(color: Colors.blue),
-
-                                        ),
-                                        filled: true,
-                                        contentPadding:
-                                        EdgeInsets.only(bottom: 10.0, left: 10.0, right: 10.0),
-                                        labelText: "Séries",
-                                        prefixIcon: Icon(
-                                          Icons.linear_scale_outlined,
-                                          color: Colors.blue,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                              SetExerciseForm(
+                                formKey: _formKey,
+                                intervalInputController: _intervalInputController,
+                                repetitionsInputController: _repetitionsInputController,
+                                seriesInputController: _seriesInputController,
                               ),
                               const SizedBox(height: 10,),
                               ElevatedButton(
                                 child: const Text('Ok'),
                                 onPressed: () {
-                                  // Exercise exercise = Exercise(
-                                  //     name: name,
-                                  //     linkYouTube: linkYouTube
-                                  // ),
-                                  // _writeExerciseOnDatabse();
+                                  // print(_intervalInputController.text);
+                                  Exercise exercise = Exercise(
+                                    name: dropdownValue,
+                                    interval: _intervalInputController.text,
+                                    series: _seriesInputController.text,
+                                    repetitions: _repetitionsInputController.text,
+                                    day: "Segunda-Feira",
+                                  );
+                                  day = "Segunda-Feira";
+                                  print(exercise.toString());
+                                  _writeExerciseForUser(exercise, day);
                                   Navigator.pop(context);
                                 },
                               ),
@@ -220,34 +159,478 @@ class _SetDailyExercisesPageState extends State<SetDailyExercisesPage> {
               },
             ),
             const SizedBox(height: 10,),
-            const CardProvider(
-              title: Text("Terça Feira"),
-              subtitle: Text("Não configurado"),
+            CardProvider(
+              title: const Text("Terça Feira"),
+              subtitle: const Text("Não configurado"),
+              onTap: (){
+                showModalBottomSheet(
+                  context: context,
+                  builder: (BuildContext context){
+                    return Container(
+                      height: MediaQuery.of(context).size.height/2,
+                      color: Colors.black12,
+                      child: Center(
+                        child: ContainerProvider(
+                          horizontal: 10,
+                          vertical: 10,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisSize: MainAxisSize.max,
+                            children: <Widget>[
+                              StatefulBuilder(
+                                builder: (BuildContext context, void Function(void Function()) setState) {
+                                  return DropdownButton<String>(
+                                    value: dropdownValue,
+                                    icon: const Icon(Icons.arrow_downward),
+                                    elevation: 16,
+                                    style: const TextStyle(color: Colors.deepPurple),
+                                    underline: Container(
+                                      height: 2,
+                                      color: Colors.deepPurpleAccent,
+                                    ),
+                                    onChanged: (String? newValue) {
+                                      setState(() {
+                                        dropdownValue = newValue!;
+                                        print(newValue);
+                                      });
+                                    },
+                                    items: listOfExercises.map<DropdownMenuItem<String>>((String value) {
+                                      return DropdownMenuItem<String>(
+                                        value: value,
+                                        child: Text(value),
+                                      );
+                                    }).toList(),
+                                  );
+                                },
+                              ),
+                              const SizedBox(height: 10,),
+                              SetExerciseForm(
+                                formKey: _formKey,
+                                intervalInputController: _intervalInputController,
+                                repetitionsInputController: _repetitionsInputController,
+                                seriesInputController: _seriesInputController,
+                              ),
+                              const SizedBox(height: 10,),
+                              ElevatedButton(
+                                child: const Text('Ok'),
+                                onPressed: () {
+                                  // print(_intervalInputController.text);
+                                  Exercise exercise = Exercise(
+                                    name: dropdownValue,
+                                    interval: _intervalInputController.text,
+                                    series: _seriesInputController.text,
+                                    repetitions: _repetitionsInputController.text,
+                                    day: "Terça-Feira",
+                                  );
+                                  day = "Terça-Feira";
+                                  print(exercise.toString());
+                                  _writeExerciseForUser(exercise, day);
+                                  Navigator.pop(context);
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                );
+              },
             ),
             const SizedBox(height: 10,),
-            const CardProvider(
+            CardProvider(
               title: Text("Quarta Feira"),
               subtitle: Text("Não configurado"),
+              onTap: (){
+                showModalBottomSheet(
+                  context: context,
+                  builder: (BuildContext context){
+                    return Container(
+                      height: MediaQuery.of(context).size.height/2,
+                      color: Colors.black12,
+                      child: Center(
+                        child: ContainerProvider(
+                          horizontal: 10,
+                          vertical: 10,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisSize: MainAxisSize.max,
+                            children: <Widget>[
+                              StatefulBuilder(
+                                builder: (BuildContext context, void Function(void Function()) setState) {
+                                  return DropdownButton<String>(
+                                    value: dropdownValue,
+                                    icon: const Icon(Icons.arrow_downward),
+                                    elevation: 16,
+                                    style: const TextStyle(color: Colors.deepPurple),
+                                    underline: Container(
+                                      height: 2,
+                                      color: Colors.deepPurpleAccent,
+                                    ),
+                                    onChanged: (String? newValue) {
+                                      setState(() {
+                                        dropdownValue = newValue!;
+                                        print(newValue);
+                                      });
+                                    },
+                                    items: listOfExercises.map<DropdownMenuItem<String>>((String value) {
+                                      return DropdownMenuItem<String>(
+                                        value: value,
+                                        child: Text(value),
+                                      );
+                                    }).toList(),
+                                  );
+                                },
+                              ),
+                              const SizedBox(height: 10,),
+                              SetExerciseForm(
+                                formKey: _formKey,
+                                intervalInputController: _intervalInputController,
+                                repetitionsInputController: _repetitionsInputController,
+                                seriesInputController: _seriesInputController,
+                              ),
+                              const SizedBox(height: 10,),
+                              ElevatedButton(
+                                child: const Text('Ok'),
+                                onPressed: () {
+                                  // print(_intervalInputController.text);
+                                  Exercise exercise = Exercise(
+                                    name: dropdownValue,
+                                    interval: _intervalInputController.text,
+                                    series: _seriesInputController.text,
+                                    repetitions: _repetitionsInputController.text,
+                                    day: "Quarta-Feira",
+                                  );
+                                  day = "Quarta-Feira";
+                                  print(exercise.toString());
+                                  _writeExerciseForUser(exercise, day);
+                                  Navigator.pop(context);
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                );
+              },
             ),
             const SizedBox(height: 10,),
-            const CardProvider(
-              title: Text("Quinta Feira"),
+            CardProvider(
+              title: const Text("Quinta Feira"),
               subtitle: Text("Não configurado"),
+              onTap: (){
+                showModalBottomSheet(
+                  context: context,
+                  builder: (BuildContext context){
+                    return Container(
+                      height: MediaQuery.of(context).size.height/2,
+                      color: Colors.black12,
+                      child: Center(
+                        child: ContainerProvider(
+                          horizontal: 10,
+                          vertical: 10,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisSize: MainAxisSize.max,
+                            children: <Widget>[
+                              StatefulBuilder(
+                                builder: (BuildContext context, void Function(void Function()) setState) {
+                                  return DropdownButton<String>(
+                                    value: dropdownValue,
+                                    icon: const Icon(Icons.arrow_downward),
+                                    elevation: 16,
+                                    style: const TextStyle(color: Colors.deepPurple),
+                                    underline: Container(
+                                      height: 2,
+                                      color: Colors.deepPurpleAccent,
+                                    ),
+                                    onChanged: (String? newValue) {
+                                      setState(() {
+                                        dropdownValue = newValue!;
+                                        print(newValue);
+                                      });
+                                    },
+                                    items: listOfExercises.map<DropdownMenuItem<String>>((String value) {
+                                      return DropdownMenuItem<String>(
+                                        value: value,
+                                        child: Text(value),
+                                      );
+                                    }).toList(),
+                                  );
+                                },
+                              ),
+                              const SizedBox(height: 10,),
+                              SetExerciseForm(
+                                formKey: _formKey,
+                                intervalInputController: _intervalInputController,
+                                repetitionsInputController: _repetitionsInputController,
+                                seriesInputController: _seriesInputController,
+                              ),
+                              const SizedBox(height: 10,),
+                              ElevatedButton(
+                                child: const Text('Ok'),
+                                onPressed: () {
+                                  // print(_intervalInputController.text);
+                                  Exercise exercise = Exercise(
+                                    name: dropdownValue,
+                                    interval: _intervalInputController.text,
+                                    series: _seriesInputController.text,
+                                    repetitions: _repetitionsInputController.text,
+                                    day: "Quinta-Feira",
+                                  );
+                                  day = "Quinta-Feira";
+                                  print(exercise.toString());
+                                  _writeExerciseForUser(exercise, day);
+                                  Navigator.pop(context);
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                );
+              },
             ),
             const SizedBox(height: 10,),
-            const CardProvider(
-              title: Text("Sexta Feira"),
+            CardProvider(
+              title: const Text("Sexta Feira"),
               subtitle: Text("Não configurado"),
+              onTap: (){
+                showModalBottomSheet(
+                  context: context,
+                  builder: (BuildContext context){
+                    return Container(
+                      height: MediaQuery.of(context).size.height/2,
+                      color: Colors.black12,
+                      child: Center(
+                        child: ContainerProvider(
+                          horizontal: 10,
+                          vertical: 10,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisSize: MainAxisSize.max,
+                            children: <Widget>[
+                              StatefulBuilder(
+                                builder: (BuildContext context, void Function(void Function()) setState) {
+                                  return DropdownButton<String>(
+                                    value: dropdownValue,
+                                    icon: const Icon(Icons.arrow_downward),
+                                    elevation: 16,
+                                    style: const TextStyle(color: Colors.deepPurple),
+                                    underline: Container(
+                                      height: 2,
+                                      color: Colors.deepPurpleAccent,
+                                    ),
+                                    onChanged: (String? newValue) {
+                                      setState(() {
+                                        dropdownValue = newValue!;
+                                        print(newValue);
+                                      });
+                                    },
+                                    items: listOfExercises.map<DropdownMenuItem<String>>((String value) {
+                                      return DropdownMenuItem<String>(
+                                        value: value,
+                                        child: Text(value),
+                                      );
+                                    }).toList(),
+                                  );
+                                },
+                              ),
+                              const SizedBox(height: 10,),
+                              SetExerciseForm(
+                                formKey: _formKey,
+                                intervalInputController: _intervalInputController,
+                                repetitionsInputController: _repetitionsInputController,
+                                seriesInputController: _seriesInputController,
+                              ),
+                              const SizedBox(height: 10,),
+                              ElevatedButton(
+                                child: const Text('Ok'),
+                                onPressed: () {
+                                  // print(_intervalInputController.text);
+                                  Exercise exercise = Exercise(
+                                    name: dropdownValue,
+                                    interval: _intervalInputController.text,
+                                    series: _seriesInputController.text,
+                                    repetitions: _repetitionsInputController.text,
+                                    day: "Sexta-Feira",
+                                  );
+                                  day = "Sexta-Feira";
+                                  print(exercise.toString());
+                                  _writeExerciseForUser(exercise, day);
+                                  Navigator.pop(context);
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                );
+              },
             ),
             const SizedBox(height: 10,),
-            const CardProvider(
-              title: Text("Sábado"),
+            CardProvider(
+              title: const Text("Sábado"),
               subtitle: Text("Não configurado"),
+              onTap: (){
+                showModalBottomSheet(
+                  context: context,
+                  builder: (BuildContext context){
+                    return Container(
+                      height: MediaQuery.of(context).size.height/2,
+                      color: Colors.black12,
+                      child: Center(
+                        child: ContainerProvider(
+                          horizontal: 10,
+                          vertical: 10,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisSize: MainAxisSize.max,
+                            children: <Widget>[
+                              StatefulBuilder(
+                                builder: (BuildContext context, void Function(void Function()) setState) {
+                                  return DropdownButton<String>(
+                                    value: dropdownValue,
+                                    icon: const Icon(Icons.arrow_downward),
+                                    elevation: 16,
+                                    style: const TextStyle(color: Colors.deepPurple),
+                                    underline: Container(
+                                      height: 2,
+                                      color: Colors.deepPurpleAccent,
+                                    ),
+                                    onChanged: (String? newValue) {
+                                      setState(() {
+                                        dropdownValue = newValue!;
+                                        print(newValue);
+                                      });
+                                    },
+                                    items: listOfExercises.map<DropdownMenuItem<String>>((String value) {
+                                      return DropdownMenuItem<String>(
+                                        value: value,
+                                        child: Text(value),
+                                      );
+                                    }).toList(),
+                                  );
+                                },
+                              ),
+                              const SizedBox(height: 10,),
+                              SetExerciseForm(
+                                formKey: _formKey,
+                                intervalInputController: _intervalInputController,
+                                repetitionsInputController: _repetitionsInputController,
+                                seriesInputController: _seriesInputController,
+                              ),
+                              const SizedBox(height: 10,),
+                              ElevatedButton(
+                                child: const Text('Ok'),
+                                onPressed: () {
+                                  // print(_intervalInputController.text);
+                                  Exercise exercise = Exercise(
+                                    name: dropdownValue,
+                                    interval: _intervalInputController.text,
+                                    series: _seriesInputController.text,
+                                    repetitions: _repetitionsInputController.text,
+                                    day: "Sábado",
+                                  );
+                                  day = "Sábado";
+                                  print(exercise.toString());
+                                  _writeExerciseForUser(exercise, day);
+                                  Navigator.pop(context);
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                );
+              },
             ),
             const SizedBox(height: 10,),
-            const CardProvider(
-              title: Text("Domingo"),
+            CardProvider(
+              title: const Text("Domingo"),
               subtitle: Text("Não configurado"),
+              onTap: () {
+                showModalBottomSheet(
+                  context: context,
+                  builder: (BuildContext context){
+                    return Container(
+                      height: MediaQuery.of(context).size.height/2,
+                      color: Colors.black12,
+                      child: Center(
+                        child: ContainerProvider(
+                          horizontal: 10,
+                          vertical: 10,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisSize: MainAxisSize.max,
+                            children: <Widget>[
+                              StatefulBuilder(
+                                builder: (BuildContext context, void Function(void Function()) setState) {
+                                  return DropdownButton<String>(
+                                    value: dropdownValue,
+                                    icon: const Icon(Icons.arrow_downward),
+                                    elevation: 16,
+                                    style: const TextStyle(color: Colors.deepPurple),
+                                    underline: Container(
+                                      height: 2,
+                                      color: Colors.deepPurpleAccent,
+                                    ),
+                                    onChanged: (String? newValue) {
+                                      setState(() {
+                                        dropdownValue = newValue!;
+                                        print(newValue);
+                                      });
+                                    },
+                                    items: listOfExercises.map<DropdownMenuItem<String>>((String value) {
+                                      return DropdownMenuItem<String>(
+                                        value: value,
+                                        child: Text(value),
+                                      );
+                                    }).toList(),
+                                  );
+                                },
+                              ),
+                              const SizedBox(height: 10,),
+                              SetExerciseForm(
+                                formKey: _formKey,
+                                intervalInputController: _intervalInputController,
+                                repetitionsInputController: _repetitionsInputController,
+                                seriesInputController: _seriesInputController,
+                              ),
+                              const SizedBox(height: 10,),
+                              ElevatedButton(
+                                child: const Text('Ok'),
+                                onPressed: () {
+                                  // print(_intervalInputController.text);
+                                  Exercise exercise = Exercise(
+                                    name: dropdownValue,
+                                    interval: _intervalInputController.text,
+                                    series: _seriesInputController.text,
+                                    repetitions: _repetitionsInputController.text,
+                                    day: "Domingo",
+                                  );
+                                  day = "Domingo";
+                                  print(exercise.toString());
+                                  _writeExerciseForUser(exercise, day);
+                                  Navigator.pop(context);
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                );
+              },
             ),
           ],
         ),
