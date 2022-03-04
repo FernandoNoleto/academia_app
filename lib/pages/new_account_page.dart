@@ -1,3 +1,4 @@
+import 'package:academiaapp/common/providers/snack_bar_provider.dart';
 import 'package:flutter/material.dart';
 
 /*Providers*/
@@ -29,7 +30,7 @@ class _NewAccountPageState extends State<NewAccountPage> {
           _nameInputController.text
       );
     } else {
-      print("invalido");
+      SnackBarProvider().showWrongSignUp();
     }
   }
 

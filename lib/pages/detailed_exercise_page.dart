@@ -7,7 +7,6 @@ import 'dart:convert';
 
 /*Providers*/
 import 'package:academiaapp/common/providers/youtube_player_provider.dart';
-import 'package:academiaapp/common/providers/card_provider.dart';
 import 'package:academiaapp/common/providers/container_provider.dart';
 
 /*Model*/
@@ -36,8 +35,7 @@ class _DetailedExercisePageState extends State<DetailedExercisePage> {
       exerciseObject = event.snapshot.value;
       exercise = Exercise.fromJson(jsonDecode(jsonEncode(Map<String, dynamic>.from(exerciseObject as Map<dynamic, dynamic>))));
       var arr = exercise.linkYouTube.split("=");
-      link = arr[1];// dividir o link do YT onde tem o '=' e pegar somente a segunda parte
-      print("Link splitado: "+link);
+      link = arr[1]; // dividir o link do YT onde tem o '=' e pegar somente a segunda parte
     });
   }
 

@@ -1,12 +1,9 @@
-import 'dart:html';
-
 import 'package:flutter/material.dart';
 
 /*Paginas*/
 import 'detailed_exercise_page.dart';
 
 /*Providers*/
-import 'package:academiaapp/common/providers/firebase_storage.dart';
 import 'package:academiaapp/common/providers/card_provider.dart';
 import 'package:academiaapp/common/providers/container_provider.dart';
 
@@ -16,9 +13,6 @@ import 'package:academiaapp/common/models/user.dart';
 
 /*Plugins*/
 import 'package:firebase_database/firebase_database.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:academiaapp/firebase_options.dart';
 import 'package:intl/intl.dart';
 import 'dart:convert';
 
@@ -36,13 +30,17 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
 
+  late AnimationController controller;
   late Object? userObject;
+  late Object? exerciseObject;
   late Object? exercisesObject;
   late User user;
+  late User userr;
   late String exercise = "Exercicio";
   late String repetitions = "Repetições";
+  late bool isDailyExerciseConfigured;
   final _dataBaseRef = FirebaseDatabase.instance.ref();
 
   @override
@@ -51,14 +49,26 @@ class _HomePageState extends State<HomePage> {
 
     _dataBaseRef.child("Users/${widget.localId}").onValue.listen((event) async {
       userObject = event.snapshot.value;
-      // print("entrou no get user");
-      // print(userObject);
       user = User.fromJson(jsonDecode(jsonEncode(Map<String, dynamic>.from(userObject as Map<dynamic, dynamic>))));
     });
+
+    controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 3),
+    )..addListener(() {
+      setState(() {});
+    });
+    controller.repeat(reverse: true);
+
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
   }
 
   String _getDayOfWeek(){
-    String dayOfWeek = "";
     DateTime date = DateTime.now();
     switch (DateFormat('EEEE').format(date)){
       case "Monday": return "Segunda-Feira"; break;
@@ -118,7 +128,7 @@ class _HomePageState extends State<HomePage> {
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               color: Colors.white,
-                              fontSize: 15,
+                              fontSize: 22,
                             ),
                             strutStyle: StrutStyle(
                               fontSize: 16.0,
@@ -135,7 +145,7 @@ class _HomePageState extends State<HomePage> {
                             textAlign: TextAlign.center,
                             style: const TextStyle(
                               color: Colors.white,
-                              fontSize: 35,
+                              fontSize: 48,
                             ),
                             strutStyle: const StrutStyle(
                               fontSize: 16.0,
@@ -148,7 +158,6 @@ class _HomePageState extends State<HomePage> {
                   ],
                 ),
               ),
-              true ?
               // AQUI VAI A RECUPERAÇÃO DA LISTA DE EXERCICIOS DO DIA
               // ----------------------------------------------------
               ContainerProvider(
@@ -159,6 +168,7 @@ class _HomePageState extends State<HomePage> {
                   builder: (context, snapshot){
                     final tilesList = <Widget>[];
                     if (snapshot.hasData) {
+                      print("tem dados");
                       final myExercises = (snapshot.data! as DatabaseEvent).snapshot.value as Map<Object, dynamic>;
                       myExercises.forEach((key, value) {
                         final nextExercise = Map<String, dynamic>.from(value);
@@ -177,14 +187,26 @@ class _HomePageState extends State<HomePage> {
                         tilesList.add(exerciseCard);
                         tilesList.add(const SizedBox(height: 10,),);
                       });
+                      return CircularProgressIndicator(
+                        value: controller.value,
+                      );
                     }
                     else{
+                      print("nao tem dados");
                       return Center(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
-                          children: const <Widget>[
-                            CircularProgressIndicator(),
+                          children: <Widget>[
+                            CircularProgressIndicator(
+                              value: controller.value,
+                            ),
+                            const Text(
+                              "Seu personal não passou exercícios para este dia",
+                              style: TextStyle(
+                                fontSize: 28,
+                              ),
+                            ),
                           ],
                         ),
                       );
@@ -194,9 +216,7 @@ class _HomePageState extends State<HomePage> {
                     );
                   },
                 ),
-              )
-                  :
-              const Text("Primeiro login"),
+              ),
             ],
           ),
         ),

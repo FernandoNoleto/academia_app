@@ -1,3 +1,4 @@
+import 'package:academiaapp/common/providers/snack_bar_provider.dart';
 import 'package:flutter/material.dart';
 
 /*Pages*/
@@ -15,8 +16,7 @@ import 'dart:convert';
 import 'package:firebase_database/firebase_database.dart';
 
 /*Models*/
-import '../common/models/user.dart';
-import '../common/models/exercise.dart';
+import 'package:academiaapp/common/models/user.dart';
 
 
 class LoginPage extends StatefulWidget {
@@ -41,7 +41,7 @@ class LoginPageState extends State<LoginPage> {
     if (_formKey.currentState!.validate()) {
       return await LoginService().login(_mailInputController.text, _passwordInputController.text);
     } else {
-      print("invalido");
+      SnackBarProvider().showWrongLogIn();
     }
   }
 
@@ -49,9 +49,8 @@ class LoginPageState extends State<LoginPage> {
     final userRef = database.child('/Users/${user.localId}');
     try{
       await userRef.update(user.toJson());
-      print("Usuario cadastrado no bd de usuarios!");
     } catch (error){
-      print("Deu o seguinte erro: $error");
+      SnackBarProvider().showError(error.toString());
     }
   }
 
@@ -148,16 +147,18 @@ class LoginPageState extends State<LoginPage> {
                           onPressed: () async {
                             http.Response response = await _doLogin();
                             if (response.statusCode == 200){
+                              print(response.body);
                               User user = User.fromJson(jsonDecode(response.body));
-                              // print("User: ${user.toString()}");
+                              print(user.toString());
                               _writeUserOnDatabase(user);
                               Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => HomePage(name: user.displayName, localId: user.localId,)
-                                  )
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => HomePage(name: user.displayName, localId: user.localId,),
+                                ),
                               );
                             } else {
+                              ScaffoldMessenger.of(context).showSnackBar(SnackBarProvider().showWrongLogIn());
                               throw Exception('Login inválido');
                             }
                           },

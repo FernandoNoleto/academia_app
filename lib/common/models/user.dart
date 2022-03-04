@@ -4,36 +4,43 @@ class User {
   final String displayName;
   final String localId;
   late bool? haveConfiguredExercises;
-  late List<Day>? days;
+  // late List<Day>? days;
 
   User({
     required this.displayName,
     required this.localId,
     this.haveConfiguredExercises = false,
-    this.days = const [],
+    // this.days = const [],
   });
 
   factory User.fromJson(Map<String, dynamic> json) {
-    if (json['days'] != null) {
-      var daysObjJson = json['exercises'] as List;
-      List<Day> _days = daysObjJson.map((dayJson) => Day.fromJson(dayJson)).toList();
 
-      // print(json['displayName'] as String);
+    return User(
+      localId: json['localId'],
+      displayName: json['displayName'],
+      haveConfiguredExercises: json['haveConfiguredExercises'] ?? false,
+    );
 
-      return User(
-        localId: json['localId'],
-        displayName: json['displayName'],
-        haveConfiguredExercises: json['haveConfiguredExercises'],
-        days: _days,
-      );
-    } else {
-      return User(
-        displayName: json['displayName'] ?? "",
-        localId: json['localId']?? "",
-        haveConfiguredExercises: json['haveConfiguredExercises'] ?? false,
-        days: const [],
-      );
-    }
+    // if (json['days'] != null) {
+    //   var daysObjJson = json['exercises'] as List;
+    //   List<Day> _days = daysObjJson.map((dayJson) => Day.fromJson(dayJson)).toList();
+    //
+    //   // print(json['displayName'] as String);
+    //
+    //   return User(
+    //     localId: json['localId'],
+    //     displayName: json['displayName'],
+    //     haveConfiguredExercises: json['haveConfiguredExercises'] ?? false,
+    //     days: _days,
+    //   );
+    // } else {
+    //   return User(
+    //     displayName: json['displayName'] ?? "",
+    //     localId: json['localId']?? "",
+    //     haveConfiguredExercises: json['haveConfiguredExercises'] ?? false,
+    //     days: const [],
+    //   );
+    // }
 
   }
 
@@ -42,7 +49,7 @@ class User {
     data['displayName'] = displayName;
     data['localId'] = localId;
     data['haveConfiguredExercises'] = haveConfiguredExercises;
-    data['days'] = days!.map((v) => v.toJson()).toList();
+    // data['days'] = days!.map((v) => v.toJson()).toList();
     return data;
   }
 

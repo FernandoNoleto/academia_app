@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 
 /*Plugins*/
 import 'dart:async';
-import 'dart:convert';
 import 'package:firebase_database/firebase_database.dart';
 
 /*Providers*/
@@ -26,7 +25,6 @@ class _HomePageAdminState extends State<HomePageAdmin> {
   final _dataBaseRef = FirebaseDatabase.instance.ref();
   late StreamSubscription _srtmSubscription;
   late List listOfUsers = [];
-  var _displayText = "";
 
 
   @override
@@ -43,27 +41,14 @@ class _HomePageAdminState extends State<HomePageAdmin> {
     super.deactivate();
   }
 
-  void _getListOfUsers(){
-    _srtmSubscription = _dataBaseRef.child("Users").onValue.listen((event) {
-      final Object? description = event.snapshot.children;
-      setState(() {
-
-        print("Exercicio: $description");
-      });
-    });
-  }
-
-  Future _activateListeners() async {
-    _srtmSubscription = _dataBaseRef.child("exerciciododia").onValue.listen((event) {
-      final data = Map<String, dynamic>.from(event.snapshot.value as dynamic);
-      final exercise = data['exercise'] as String;
-      final repetitions = data['repetitions'] as String;
-      final interval = data['interval'] as String;
-      setState(() {
-        _displayText = "Exercicio do dia: $exercise com $repetitions repetições e intervalo de $interval segundos";
-      });
-    });
-  }
+  // Future _activateListeners() async {
+  //   _srtmSubscription = _dataBaseRef.child("exerciciododia").onValue.listen((event) {
+  //     final data = Map<String, dynamic>.from(event.snapshot.value as dynamic);
+  //     final exercise = data['exercise'] as String;
+  //     final repetitions = data['repetitions'] as String;
+  //     final interval = data['interval'] as String;
+  //   });
+  // }
 
   _toggleHaveConfiguredExercise(User user, bool toggle) async{
     final userRef = _dataBaseRef.child('/Users/${user.localId}');
@@ -81,7 +66,7 @@ class _HomePageAdminState extends State<HomePageAdmin> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Area do administrador"),
+        title: const Text("Area do Personal"),
       ),
       body: ContainerProvider(
         vertical: 10,
