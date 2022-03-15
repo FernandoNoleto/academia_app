@@ -15,7 +15,7 @@ class SnackBarProvider{
   }
 
   SnackBar showWrongLogIn(){
-    SnackBar showExerciseConfirmAlert = SnackBar(
+    SnackBar showWrongLogIn = SnackBar(
       // ignore: unnecessary_string_escapes
       content: const Text("Email ou senha inválido"),
       action: SnackBarAction(
@@ -23,9 +23,8 @@ class SnackBarProvider{
         onPressed: () {},
       ),
     );
-    return showExerciseConfirmAlert;
+    return showWrongLogIn;
   }
-
 
   SnackBar showError(String error){
     SnackBar showExerciseConfirmAlert = SnackBar(
@@ -50,6 +49,7 @@ class SnackBarProvider{
     );
     return showExerciseConfirmAlert;
   }
+
 
 
 }

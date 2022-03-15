@@ -11,7 +11,7 @@ class FirebaseStorageProvider{
 
     List<String> exercises = [];
     late Exercise exercise;
-    FirebaseDatabase.instance.ref().child("Exercises").onValue.listen((event) {
+    FirebaseDatabase.instance.ref().child("Exercises").onValue.listen((event) async {
       final description = event.snapshot.children;
       for (var element in description) {
         exercise = Exercise.fromJson(jsonDecode(jsonEncode(Map<String, dynamic>.from(element.value as Map<dynamic, dynamic>))));

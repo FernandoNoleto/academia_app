@@ -48,8 +48,8 @@ class MyApp extends StatelessWidget {
       title: 'Gym App',
       theme: ThemeData(fontFamily: 'Fredoka'),
       // home: const DetailedExercisePage(),
-      home: LoginPage(),
-      // home: HomePageAdmin(),
+      // home: const LoginPage(),
+      home: const HomePageAdmin(),
       // home: HomePage(name: "Fernando", uid: "ID",),
       debugShowCheckedModeBanner: false,
     );

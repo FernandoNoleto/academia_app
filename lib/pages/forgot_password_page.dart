@@ -65,7 +65,9 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                         widthFactor: 1, // means 100%, you can change this to 0.8 (80%)
                         child: ElevatedButton(
                           child: const Text("Recuperar senha"),
-                          onPressed: () { },
+                          onPressed: () {
+                            //TODO: implementar função de recuperar senha
+                          },
                         ),
                       ),
                     ),

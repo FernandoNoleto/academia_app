@@ -53,7 +53,7 @@ class LoginPageState extends State<LoginPage> {
         var userObject = event.snapshot.value;
         user = User.fromJson(jsonDecode(jsonEncode(Map<String, dynamic>.from(userObject as Map<dynamic, dynamic>))));
         await userRef.update(user.toJson());
-        print(user);
+        // print(user);
       });
     }
     catch(error){
