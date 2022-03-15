@@ -45,11 +45,18 @@ class LoginPageState extends State<LoginPage> {
     }
   }
 
-  _writeUserOnDatabase(User user) async{
+  _writeUserOnDatabase(User user) {
+
     final userRef = database.child('/Users/${user.localId}');
     try{
-      await userRef.update(user.toJson());
-    } catch (error){
+      userRef.onValue.listen((event) async {
+        var userObject = event.snapshot.value;
+        user = User.fromJson(jsonDecode(jsonEncode(Map<String, dynamic>.from(userObject as Map<dynamic, dynamic>))));
+        await userRef.update(user.toJson());
+        print(user);
+      });
+    }
+    catch(error){
       SnackBarProvider().showError(error.toString());
     }
   }

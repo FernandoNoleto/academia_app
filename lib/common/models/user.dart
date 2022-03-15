@@ -9,7 +9,7 @@ class User {
   User({
     required this.displayName,
     required this.localId,
-    this.haveConfiguredExercises = false,
+    this.haveConfiguredExercises,
     // this.days = const [],
   });
 
