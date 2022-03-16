@@ -1,5 +1,6 @@
 import 'package:academiaapp/common/models/user.dart';
 import 'package:academiaapp/common/providers/container_provider.dart';
+import 'package:academiaapp/common/providers/firebase_storage.dart';
 import 'package:academiaapp/pages/register_exercises.dart';
 import 'package:academiaapp/pages/set_daily_exercises.dart';
 import 'package:flutter/material.dart';
@@ -25,11 +26,13 @@ class _HomePageAdminState extends State<HomePageAdmin> {
   final _dataBaseRef = FirebaseDatabase.instance.ref();
   late StreamSubscription _srtmSubscription;
   late List listOfUsers = [];
+  late List<String> listOfExercises = [];
 
 
   @override
   void initState(){
     super.initState();
+    listOfExercises = FirebaseStorageProvider().getExercises();
     // _getListOfUsers();
     // _activateListeners();
     // listOfUsers = _getListOfUsers();
@@ -81,7 +84,7 @@ class _HomePageAdminState extends State<HomePageAdmin> {
                 final nextUser = Map<String, dynamic>.from(value);
                 final userCard = CardProvider(
                   title: Text(nextUser['displayName']),
-                  subtitle: const Text("subtitle"),
+                  subtitle: const Text(""),
                   logo: const Icon(Icons.account_circle, size: 32),
                   borderColor: nextUser['haveConfiguredExercises'] ? const Color.fromARGB(255, 34, 187, 51) : const Color.fromARGB(255, 187, 33, 36),
                   trailing: IconButton(
@@ -94,7 +97,7 @@ class _HomePageAdminState extends State<HomePageAdmin> {
                   onTap: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => SetDailyExercisesPage(localId: nextUser['localId'])),
+                      MaterialPageRoute(builder: (context) => SetDailyExercisesPage(localId: nextUser['localId'], list: listOfExercises),),
                     );
                   },
                 );

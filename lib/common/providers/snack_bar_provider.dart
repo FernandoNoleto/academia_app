@@ -14,6 +14,18 @@ class SnackBarProvider{
     return showExerciseConfirmAlert;
   }
 
+  SnackBar showExerciseAddConfirmAlert(exercise){
+    SnackBar showExerciseAddConfirmAlert = SnackBar(
+      // ignore: unnecessary_string_escapes
+      content: Text("Exercício \'" +exercise+ "\' adicionado!"),
+      action: SnackBarAction(
+        label: "Ok",
+        onPressed: () {},
+      ),
+    );
+    return showExerciseAddConfirmAlert;
+  }
+
   SnackBar showWrongLogIn(){
     SnackBar showWrongLogIn = SnackBar(
       // ignore: unnecessary_string_escapes

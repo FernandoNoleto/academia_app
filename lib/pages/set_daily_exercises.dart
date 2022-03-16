@@ -2,8 +2,9 @@ import 'dart:convert';
 
 import 'package:academiaapp/common/providers/card_provider.dart';
 import 'package:academiaapp/common/providers/container_provider.dart';
-import 'package:academiaapp/common/providers/firebase_storage.dart';
+// import 'package:academiaapp/common/providers/firebase_storage.dart';
 import 'package:academiaapp/common/providers/set_exercise_form_provider.dart';
+import 'package:academiaapp/common/providers/snack_bar_provider.dart';
 import 'package:flutter/material.dart';
 
 /*Models*/
@@ -15,10 +16,14 @@ import 'package:academiaapp/common/models/user.dart';
 import 'package:firebase_database/firebase_database.dart';
 
 
-
 class SetDailyExercisesPage extends StatefulWidget {
-  const SetDailyExercisesPage({Key? key, required this.localId}) : super(key: key);
+  const SetDailyExercisesPage({
+    Key? key,
+    required this.localId,
+    required this.list,
+  }) : super(key: key);
   final String localId;
+  final List<String> list;
 
 
   @override
@@ -37,7 +42,7 @@ class _SetDailyExercisesPageState extends State<SetDailyExercisesPage> {
   late Object? exerciseObject;
   late User user;
   late Exercise exercise;
-  List<String> listOfExercises = [];
+  late List<String> listOfExercises;
   String dropdownValue = "";
   String day = "";
   late bool isDailyExerciseConfigured;
@@ -47,42 +52,22 @@ class _SetDailyExercisesPageState extends State<SetDailyExercisesPage> {
   void initState(){
     super.initState();
     _getUser(widget.localId);
-    listOfExercises = FirebaseStorageProvider().getExercises();
-    //TODO: Corrigir erro que lança exceção toda vez que abre pela primeira vez pq nao deu tempo de carregar as informaçãoes
-    // dropdownValue = listOfExercises.firstWhere((element) => element == listOfExercises.first, orElse: () => "");
+    widget.list.isNotEmpty ? listOfExercises = widget.list : listOfExercises.add(""); // Lista é carregada desde a tela anterior
     dropdownValue = listOfExercises.first;
-    // if (listOfExercises.isNotEmpty){
-    //   dropdownValue = listOfExercises.first;
-    // }
-    // else{
-    //   dropdownValue = " ";
-    // }
   }
 
   void _getUser(String id) {
     dbRef.child("Users/$id").onValue.listen((event) {
       userObject = event.snapshot.value;
-      // print(userObject);
       user = User.fromJson(jsonDecode(jsonEncode(Map<String, dynamic>.from(userObject as Map<dynamic, dynamic>))));
-      print(user);
     });
-  }
-
-  void _getExerciseFromUser() async{
-    final userRef = dbRef.child('/Users/${widget.localId}/Exerciciododia/$day/${exercise.name}');
-    try{
-      await userRef.update(exercise.toJson());
-      print("Exercicio cadastrado no bd do usuário!");
-    } catch (error){
-      print("Deu o seguinte erro: $error");
-    }
   }
 
   void _writeExerciseForUser(Exercise exercise, day) async {
     final userRef = dbRef.child('/Users/${widget.localId}/Exerciciododia/$day/${exercise.name}');
     try{
       await userRef.update(exercise.toJson());
-      print("Exercicio cadastrado no bd do usuário!");
+      // print("Exercicio cadastrado no bd do usuário!");
     } catch (error){
       print("Deu o seguinte erro: $error");
     }
@@ -114,8 +99,16 @@ class _SetDailyExercisesPageState extends State<SetDailyExercisesPage> {
             ],
           );
         }
-      );
-    // dbRef.child("Users/${widget.localId}/Exerciciododia/$day/$nameExercise").remove();
+    );
+  }
+
+  bool isDailyExercise(String day){
+    bool flag = false;
+
+    dbRef.child("Users/${widget.localId}/Exerciciododia/$day").onValue.listen((event) async {
+      flag = event.snapshot.exists;
+    });
+    return flag;
   }
 
   void showModal(String day){
@@ -148,7 +141,7 @@ class _SetDailyExercisesPageState extends State<SetDailyExercisesPage> {
                           subtitle: Text("Repetições:" +nextExercise['repetitions']),
                           logo: const Icon(Icons.account_circle, size: 32),
                           trailing: IconButton(
-                            tooltip: "Alternar exercício configurado",
+                            tooltip: "Deletar exercício configurado",
                             onPressed: () {
                               _deleteExercise(nextExercise['name'], day);
                             },
@@ -211,7 +204,11 @@ class _SetDailyExercisesPageState extends State<SetDailyExercisesPage> {
                           repetitions: _repetitionsInputController.text,
                           day: day,
                         );
-                        _writeExerciseForUser(exercise, day);
+                        setState(() {
+                          _writeExerciseForUser(exercise, day);
+                          _formKey.currentState?.reset();
+                          SnackBarProvider().showExerciseAddConfirmAlert(exercise.name);
+                        });
                         // Navigator.pop(context);
                       },
                     ),
@@ -238,561 +235,71 @@ class _SetDailyExercisesPageState extends State<SetDailyExercisesPage> {
           children: <Widget> [
             CardProvider(
               title: const Text("Segunda Feira"),
-              subtitle: const Text("Não configurado"),
+              subtitle: isDailyExercise("Segunda-Feira") ? const Text("Configurado") : const Text("Não configurado"),
+              borderColor: isDailyExercise("Segunda-Feira") ? const Color.fromARGB(255, 34, 187, 51) : const Color.fromARGB(255, 187, 33, 36),
+              logo: isDailyExercise("Segunda-Feira") ? const Image(image: AssetImage('assets/images/exercise.png')) : const Image(image: AssetImage('assets/images/rest.png')),
               onTap: (){
                 showModal("Segunda-Feira");
-                // showModalBottomSheet( //Modal
-                //   context: context,
-                //   builder: (BuildContext context){
-                //     return Container(
-                //       height: MediaQuery.of(context).size.height/2,
-                //       color: Colors.black12,
-                //       child: Center(
-                //         child: ContainerProvider(
-                //           horizontal: 10,
-                //           vertical: 10,
-                //           child: Column(
-                //             mainAxisAlignment: MainAxisAlignment.center,
-                //             mainAxisSize: MainAxisSize.max,
-                //             children: <Widget>[
-                //               StatefulBuilder(
-                //                 builder: (BuildContext context, void Function(void Function()) setState) {
-                //                   return DropdownButton<String>(
-                //                     value: dropdownValue,
-                //                     icon: const Icon(Icons.arrow_downward),
-                //                     elevation: 16,
-                //                     style: const TextStyle(color: Colors.deepPurple),
-                //                     underline: Container(
-                //                       height: 2,
-                //                       color: Colors.deepPurpleAccent,
-                //                     ),
-                //                     onChanged: (String? newValue) {
-                //                       setState(() {
-                //                         dropdownValue = newValue!;
-                //                         print(newValue);
-                //                       });
-                //                     },
-                //                     items: listOfExercises.map<DropdownMenuItem<String>>((String value) {
-                //                       return DropdownMenuItem<String>(
-                //                         value: value,
-                //                         child: Text(value),
-                //                       );
-                //                     }).toList(),
-                //                   );
-                //                 },
-                //               ),
-                //               const SizedBox(height: 10,),
-                //               SetExerciseForm(
-                //                 formKey: _formKey,
-                //                 intervalInputController: _intervalInputController,
-                //                 repetitionsInputController: _repetitionsInputController,
-                //                 seriesInputController: _seriesInputController,
-                //               ),
-                //               const SizedBox(height: 10,),
-                //               ElevatedButton(
-                //                 child: const Text('Ok'),
-                //                 onPressed: () {
-                //                   // print(_intervalInputController.text);
-                //                   Exercise exercise = Exercise(
-                //                     name: dropdownValue,
-                //                     interval: _intervalInputController.text,
-                //                     series: _seriesInputController.text,
-                //                     repetitions: _repetitionsInputController.text,
-                //                     day: "Segunda-Feira",
-                //                   );
-                //                   day = "Segunda-Feira";
-                //                   print(exercise.toString());
-                //                   _writeExerciseForUser(exercise, day);
-                //                   Navigator.pop(context);
-                //                 },
-                //               ),
-                //             ],
-                //           ),
-                //         ),
-                //       ),
-                //     );
-                //   }, // Modal
-                // );
               },
             ),
             const SizedBox(height: 10,),
             CardProvider(
               title: const Text("Terça Feira"),
-              subtitle: const Text("Não configurado"),
+              subtitle: isDailyExercise("Terça-Feira") ? const Text("Configurado") : const Text("Não configurado"),
+              borderColor: isDailyExercise("Terça-Feira") ? const Color.fromARGB(255, 34, 187, 51) : const Color.fromARGB(255, 187, 33, 36),
+              logo: isDailyExercise("Terça-Feira") ? const Image(image: AssetImage('assets/images/exercise.png')) : const Image(image: AssetImage('assets/images/rest.png')),
               onTap: (){
                 showModal("Terça-Feira");
-                // showModalBottomSheet(
-                //   context: context,
-                //   builder: (BuildContext context){
-                //     return Container(
-                //       height: MediaQuery.of(context).size.height/2,
-                //       color: Colors.black12,
-                //       child: Center(
-                //         child: ContainerProvider(
-                //           horizontal: 10,
-                //           vertical: 10,
-                //           child: Column(
-                //             mainAxisAlignment: MainAxisAlignment.center,
-                //             mainAxisSize: MainAxisSize.max,
-                //             children: <Widget>[
-                //               StatefulBuilder(
-                //                 builder: (BuildContext context, void Function(void Function()) setState) {
-                //                   return DropdownButton<String>(
-                //                     value: dropdownValue,
-                //                     icon: const Icon(Icons.arrow_downward),
-                //                     elevation: 16,
-                //                     style: const TextStyle(color: Colors.deepPurple),
-                //                     underline: Container(
-                //                       height: 2,
-                //                       color: Colors.deepPurpleAccent,
-                //                     ),
-                //                     onChanged: (String? newValue) {
-                //                       setState(() {
-                //                         dropdownValue = newValue!;
-                //                         print(newValue);
-                //                       });
-                //                     },
-                //                     items: listOfExercises.map<DropdownMenuItem<String>>((String value) {
-                //                       return DropdownMenuItem<String>(
-                //                         value: value,
-                //                         child: Text(value),
-                //                       );
-                //                     }).toList(),
-                //                   );
-                //                 },
-                //               ),
-                //               const SizedBox(height: 10,),
-                //               SetExerciseForm(
-                //                 formKey: _formKey,
-                //                 intervalInputController: _intervalInputController,
-                //                 repetitionsInputController: _repetitionsInputController,
-                //                 seriesInputController: _seriesInputController,
-                //               ),
-                //               const SizedBox(height: 10,),
-                //               ElevatedButton(
-                //                 child: const Text('Ok'),
-                //                 onPressed: () {
-                //                   // print(_intervalInputController.text);
-                //                   Exercise exercise = Exercise(
-                //                     name: dropdownValue,
-                //                     interval: _intervalInputController.text,
-                //                     series: _seriesInputController.text,
-                //                     repetitions: _repetitionsInputController.text,
-                //                     day: "Terça-Feira",
-                //                   );
-                //                   day = "Terça-Feira";
-                //                   print(exercise.toString());
-                //                   _writeExerciseForUser(exercise, day);
-                //                   Navigator.pop(context);
-                //                 },
-                //               ),
-                //             ],
-                //           ),
-                //         ),
-                //       ),
-                //     );
-                //   },
-                // );
               },
             ),
             const SizedBox(height: 10,),
             CardProvider(
               title: const Text("Quarta Feira"),
-              subtitle: const Text("Não configurado"),
+              subtitle: isDailyExercise("Quarta-Feira") ? const Text("Configurado") : const Text("Não configurado"),
+              borderColor: isDailyExercise("Quarta-Feira") ? const Color.fromARGB(255, 34, 187, 51) : const Color.fromARGB(255, 187, 33, 36),
+              logo: isDailyExercise("Quarta-Feira") ? const Image(image: AssetImage('assets/images/exercise.png')) : const Image(image: AssetImage('assets/images/rest.png')),
               onTap: (){
                 showModal("Quarta-Feira");
-                // showModalBottomSheet(
-                //   context: context,
-                //   builder: (BuildContext context){
-                //     return Container(
-                //       height: MediaQuery.of(context).size.height/2,
-                //       color: Colors.black12,
-                //       child: Center(
-                //         child: ContainerProvider(
-                //           horizontal: 10,
-                //           vertical: 10,
-                //           child: Column(
-                //             mainAxisAlignment: MainAxisAlignment.center,
-                //             mainAxisSize: MainAxisSize.max,
-                //             children: <Widget>[
-                //               StatefulBuilder(
-                //                 builder: (BuildContext context, void Function(void Function()) setState) {
-                //                   return DropdownButton<String>(
-                //                     value: dropdownValue,
-                //                     icon: const Icon(Icons.arrow_downward),
-                //                     elevation: 16,
-                //                     style: const TextStyle(color: Colors.deepPurple),
-                //                     underline: Container(
-                //                       height: 2,
-                //                       color: Colors.deepPurpleAccent,
-                //                     ),
-                //                     onChanged: (String? newValue) {
-                //                       setState(() {
-                //                         dropdownValue = newValue!;
-                //                         print(newValue);
-                //                       });
-                //                     },
-                //                     items: listOfExercises.map<DropdownMenuItem<String>>((String value) {
-                //                       return DropdownMenuItem<String>(
-                //                         value: value,
-                //                         child: Text(value),
-                //                       );
-                //                     }).toList(),
-                //                   );
-                //                 },
-                //               ),
-                //               const SizedBox(height: 10,),
-                //               SetExerciseForm(
-                //                 formKey: _formKey,
-                //                 intervalInputController: _intervalInputController,
-                //                 repetitionsInputController: _repetitionsInputController,
-                //                 seriesInputController: _seriesInputController,
-                //               ),
-                //               const SizedBox(height: 10,),
-                //               ElevatedButton(
-                //                 child: const Text('Ok'),
-                //                 onPressed: () {
-                //                   // print(_intervalInputController.text);
-                //                   Exercise exercise = Exercise(
-                //                     name: dropdownValue,
-                //                     interval: _intervalInputController.text,
-                //                     series: _seriesInputController.text,
-                //                     repetitions: _repetitionsInputController.text,
-                //                     day: "Quarta-Feira",
-                //                   );
-                //                   day = "Quarta-Feira";
-                //                   print(exercise.toString());
-                //                   _writeExerciseForUser(exercise, day);
-                //                   Navigator.pop(context);
-                //                 },
-                //               ),
-                //             ],
-                //           ),
-                //         ),
-                //       ),
-                //     );
-                //   },
-                // );
               },
             ),
             const SizedBox(height: 10,),
             CardProvider(
               title: const Text("Quinta Feira"),
-              subtitle: const Text("Não configurado"),
+              subtitle: isDailyExercise("Quinta-Feira") ? const Text("Configurado") : const Text("Não configurado"),
+              borderColor: isDailyExercise("Quinta-Feira") ? const Color.fromARGB(255, 34, 187, 51) : const Color.fromARGB(255, 187, 33, 36),
+              logo: isDailyExercise("Quinta-Feira") ? const Image(image: AssetImage('assets/images/exercise.png')) : const Image(image: AssetImage('assets/images/rest.png')),
               onTap: (){
                 showModal("Quinta-Feira");
-                // showModalBottomSheet(
-                //   context: context,
-                //   builder: (BuildContext context){
-                //     return Container(
-                //       height: MediaQuery.of(context).size.height/2,
-                //       color: Colors.black12,
-                //       child: Center(
-                //         child: ContainerProvider(
-                //           horizontal: 10,
-                //           vertical: 10,
-                //           child: Column(
-                //             mainAxisAlignment: MainAxisAlignment.center,
-                //             mainAxisSize: MainAxisSize.max,
-                //             children: <Widget>[
-                //               StatefulBuilder(
-                //                 builder: (BuildContext context, void Function(void Function()) setState) {
-                //                   return DropdownButton<String>(
-                //                     value: dropdownValue,
-                //                     icon: const Icon(Icons.arrow_downward),
-                //                     elevation: 16,
-                //                     style: const TextStyle(color: Colors.deepPurple),
-                //                     underline: Container(
-                //                       height: 2,
-                //                       color: Colors.deepPurpleAccent,
-                //                     ),
-                //                     onChanged: (String? newValue) {
-                //                       setState(() {
-                //                         dropdownValue = newValue!;
-                //                         print(newValue);
-                //                       });
-                //                     },
-                //                     items: listOfExercises.map<DropdownMenuItem<String>>((String value) {
-                //                       return DropdownMenuItem<String>(
-                //                         value: value,
-                //                         child: Text(value),
-                //                       );
-                //                     }).toList(),
-                //                   );
-                //                 },
-                //               ),
-                //               const SizedBox(height: 10,),
-                //               SetExerciseForm(
-                //                 formKey: _formKey,
-                //                 intervalInputController: _intervalInputController,
-                //                 repetitionsInputController: _repetitionsInputController,
-                //                 seriesInputController: _seriesInputController,
-                //               ),
-                //               const SizedBox(height: 10,),
-                //               ElevatedButton(
-                //                 child: const Text('Ok'),
-                //                 onPressed: () {
-                //                   // print(_intervalInputController.text);
-                //                   Exercise exercise = Exercise(
-                //                     name: dropdownValue,
-                //                     interval: _intervalInputController.text,
-                //                     series: _seriesInputController.text,
-                //                     repetitions: _repetitionsInputController.text,
-                //                     day: "Quinta-Feira",
-                //                   );
-                //                   day = "Quinta-Feira";
-                //                   print(exercise.toString());
-                //                   _writeExerciseForUser(exercise, day);
-                //                   Navigator.pop(context);
-                //                 },
-                //               ),
-                //             ],
-                //           ),
-                //         ),
-                //       ),
-                //     );
-                //   },
-                // );
               },
             ),
             const SizedBox(height: 10,),
             CardProvider(
               title: const Text("Sexta Feira"),
-              subtitle: const Text("Não configurado"),
+              subtitle: isDailyExercise("Sexta-Feira") ? const Text("Configurado") : const Text("Não configurado"),
+              borderColor: isDailyExercise("Sexta-Feira") ? const Color.fromARGB(255, 34, 187, 51) : const Color.fromARGB(255, 187, 33, 36),
+              logo: isDailyExercise("Sexta-Feira") ? const Image(image: AssetImage('assets/images/exercise.png')) : const Image(image: AssetImage('assets/images/rest.png')),
               onTap: (){
                 showModal("Sexta-Feira");
-                // showModalBottomSheet(
-                //   context: context,
-                //   builder: (BuildContext context){
-                //     return Container(
-                //       height: MediaQuery.of(context).size.height/2,
-                //       color: Colors.black12,
-                //       child: Center(
-                //         child: ContainerProvider(
-                //           horizontal: 10,
-                //           vertical: 10,
-                //           child: Column(
-                //             mainAxisAlignment: MainAxisAlignment.center,
-                //             mainAxisSize: MainAxisSize.max,
-                //             children: <Widget>[
-                //               StatefulBuilder(
-                //                 builder: (BuildContext context, void Function(void Function()) setState) {
-                //                   return DropdownButton<String>(
-                //                     value: dropdownValue,
-                //                     icon: const Icon(Icons.arrow_downward),
-                //                     elevation: 16,
-                //                     style: const TextStyle(color: Colors.deepPurple),
-                //                     underline: Container(
-                //                       height: 2,
-                //                       color: Colors.deepPurpleAccent,
-                //                     ),
-                //                     onChanged: (String? newValue) {
-                //                       setState(() {
-                //                         dropdownValue = newValue!;
-                //                         print(newValue);
-                //                       });
-                //                     },
-                //                     items: listOfExercises.map<DropdownMenuItem<String>>((String value) {
-                //                       return DropdownMenuItem<String>(
-                //                         value: value,
-                //                         child: Text(value),
-                //                       );
-                //                     }).toList(),
-                //                   );
-                //                 },
-                //               ),
-                //               const SizedBox(height: 10,),
-                //               SetExerciseForm(
-                //                 formKey: _formKey,
-                //                 intervalInputController: _intervalInputController,
-                //                 repetitionsInputController: _repetitionsInputController,
-                //                 seriesInputController: _seriesInputController,
-                //               ),
-                //               const SizedBox(height: 10,),
-                //               ElevatedButton(
-                //                 child: const Text('Ok'),
-                //                 onPressed: () {
-                //                   // print(_intervalInputController.text);
-                //                   Exercise exercise = Exercise(
-                //                     name: dropdownValue,
-                //                     interval: _intervalInputController.text,
-                //                     series: _seriesInputController.text,
-                //                     repetitions: _repetitionsInputController.text,
-                //                     day: "Sexta-Feira",
-                //                   );
-                //                   day = "Sexta-Feira";
-                //                   print(exercise.toString());
-                //                   _writeExerciseForUser(exercise, day);
-                //                   Navigator.pop(context);
-                //                 },
-                //               ),
-                //             ],
-                //           ),
-                //         ),
-                //       ),
-                //     );
-                //   },
-                // );
               },
             ),
             const SizedBox(height: 10,),
             CardProvider(
               title: const Text("Sábado"),
-              subtitle: const Text("Não configurado"),
+              subtitle: isDailyExercise("Sábado") ? const Text("Configurado") : const Text("Não configurado"),
+              borderColor: isDailyExercise("Sábado") ? const Color.fromARGB(255, 34, 187, 51) : const Color.fromARGB(255, 187, 33, 36),
+              logo: isDailyExercise("Sábado") ? const Image(image: AssetImage('assets/images/exercise.png')) : const Image(image: AssetImage('assets/images/rest.png')),
               onTap: (){
                 showModal("Sábado");
-                // showModalBottomSheet(
-                //   context: context,
-                //   builder: (BuildContext context){
-                //     return Container(
-                //       height: MediaQuery.of(context).size.height/2,
-                //       color: Colors.black12,
-                //       child: Center(
-                //         child: ContainerProvider(
-                //           horizontal: 10,
-                //           vertical: 10,
-                //           child: Column(
-                //             mainAxisAlignment: MainAxisAlignment.center,
-                //             mainAxisSize: MainAxisSize.max,
-                //             children: <Widget>[
-                //               StatefulBuilder(
-                //                 builder: (BuildContext context, void Function(void Function()) setState) {
-                //                   return DropdownButton<String>(
-                //                     value: dropdownValue,
-                //                     icon: const Icon(Icons.arrow_downward),
-                //                     elevation: 16,
-                //                     style: const TextStyle(color: Colors.deepPurple),
-                //                     underline: Container(
-                //                       height: 2,
-                //                       color: Colors.deepPurpleAccent,
-                //                     ),
-                //                     onChanged: (String? newValue) {
-                //                       setState(() {
-                //                         dropdownValue = newValue!;
-                //                         print(newValue);
-                //                       });
-                //                     },
-                //                     items: listOfExercises.map<DropdownMenuItem<String>>((String value) {
-                //                       return DropdownMenuItem<String>(
-                //                         value: value,
-                //                         child: Text(value),
-                //                       );
-                //                     }).toList(),
-                //                   );
-                //                 },
-                //               ),
-                //               const SizedBox(height: 10,),
-                //               SetExerciseForm(
-                //                 formKey: _formKey,
-                //                 intervalInputController: _intervalInputController,
-                //                 repetitionsInputController: _repetitionsInputController,
-                //                 seriesInputController: _seriesInputController,
-                //               ),
-                //               const SizedBox(height: 10,),
-                //               ElevatedButton(
-                //                 child: const Text('Ok'),
-                //                 onPressed: () {
-                //                   // print(_intervalInputController.text);
-                //                   Exercise exercise = Exercise(
-                //                     name: dropdownValue,
-                //                     interval: _intervalInputController.text,
-                //                     series: _seriesInputController.text,
-                //                     repetitions: _repetitionsInputController.text,
-                //                     day: "Sábado",
-                //                   );
-                //                   day = "Sábado";
-                //                   print(exercise.toString());
-                //                   _writeExerciseForUser(exercise, day);
-                //                   Navigator.pop(context);
-                //                 },
-                //               ),
-                //             ],
-                //           ),
-                //         ),
-                //       ),
-                //     );
-                //   },
-                // );
               },
             ),
             const SizedBox(height: 10,),
             CardProvider(
               title: const Text("Domingo"),
-              subtitle: Text("Não configurado"),
+              subtitle: isDailyExercise("Domingo") ? const Text("Configurado") : const Text("Não configurado"),
+              borderColor: isDailyExercise("Domingo") ? const Color.fromARGB(255, 34, 187, 51) : const Color.fromARGB(255, 187, 33, 36),
+              logo: isDailyExercise("Domingo") ? const Image(image: AssetImage('assets/images/exercise.png')) : const Image(image: AssetImage('assets/images/rest.png')),
               onTap: () {
                 showModal("Domingo");
-                // showModalBottomSheet(
-                //   context: context,
-                //   builder: (BuildContext context){
-                //     return Container(
-                //       height: MediaQuery.of(context).size.height/2,
-                //       color: Colors.black12,
-                //       child: Center(
-                //         child: ContainerProvider(
-                //           horizontal: 10,
-                //           vertical: 10,
-                //           child: Column(
-                //             mainAxisAlignment: MainAxisAlignment.center,
-                //             mainAxisSize: MainAxisSize.max,
-                //             children: <Widget>[
-                //               StatefulBuilder(
-                //                 builder: (BuildContext context, void Function(void Function()) setState) {
-                //                   return DropdownButton<String>(
-                //                     value: dropdownValue,
-                //                     icon: const Icon(Icons.arrow_downward),
-                //                     elevation: 16,
-                //                     style: const TextStyle(color: Colors.deepPurple),
-                //                     underline: Container(
-                //                       height: 2,
-                //                       color: Colors.deepPurpleAccent,
-                //                     ),
-                //                     onChanged: (String? newValue) {
-                //                       setState(() {
-                //                         dropdownValue = newValue!;
-                //                         print(newValue);
-                //                       });
-                //                     },
-                //                     items: listOfExercises.map<DropdownMenuItem<String>>((String value) {
-                //                       return DropdownMenuItem<String>(
-                //                         value: value,
-                //                         child: Text(value),
-                //                       );
-                //                     }).toList(),
-                //                   );
-                //                 },
-                //               ),
-                //               const SizedBox(height: 10,),
-                //               SetExerciseForm(
-                //                 formKey: _formKey,
-                //                 intervalInputController: _intervalInputController,
-                //                 repetitionsInputController: _repetitionsInputController,
-                //                 seriesInputController: _seriesInputController,
-                //               ),
-                //               const SizedBox(height: 10,),
-                //               ElevatedButton(
-                //                 child: const Text('Ok'),
-                //                 onPressed: () {
-                //                   // print(_intervalInputController.text);
-                //                   Exercise exercise = Exercise(
-                //                     name: dropdownValue,
-                //                     interval: _intervalInputController.text,
-                //                     series: _seriesInputController.text,
-                //                     repetitions: _repetitionsInputController.text,
-                //                     day: "Domingo",
-                //                   );
-                //                   day = "Domingo";
-                //                   print(exercise.toString());
-                //                   _writeExerciseForUser(exercise, day);
-                //                   Navigator.pop(context);
-                //                 },
-                //               ),
-                //             ],
-                //           ),
-                //         ),
-                //       ),
-                //     );
-                //   },
-                // );
               },
             ),
           ],

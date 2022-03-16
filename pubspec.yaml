@@ -38,6 +38,8 @@ flutter:
   assets:
     - assets/images/gym-icon.png
     - assets/images/exercise-icon.png
+    - assets/images/rest.png
+    - assets/images/exercise.png
 
   fonts:
     - family: Fredoka
