@@ -40,7 +40,7 @@ class _SetDailyExercisesPageState extends State<SetDailyExercisesPage> {
   final dbRef = FirebaseDatabase.instance.ref();
   late Object? userObject;
   late Object? exerciseObject;
-  late User user;
+  User? user;
   late Exercise exercise;
   late List<String> listOfExercises;
   String dropdownValue = "";
@@ -56,10 +56,12 @@ class _SetDailyExercisesPageState extends State<SetDailyExercisesPage> {
     dropdownValue = listOfExercises.first;
   }
 
-  void _getUser(String id) {
+  void _getUser(String id) async{
     dbRef.child("Users/$id").onValue.listen((event) {
       userObject = event.snapshot.value;
-      user = User.fromJson(jsonDecode(jsonEncode(Map<String, dynamic>.from(userObject as Map<dynamic, dynamic>))));
+      setState(() {
+        user = User.fromJson(jsonDecode(jsonEncode(Map<String, dynamic>.from(userObject as Map<dynamic, dynamic>))));
+      });
     });
   }
 
@@ -69,7 +71,8 @@ class _SetDailyExercisesPageState extends State<SetDailyExercisesPage> {
       await userRef.update(exercise.toJson());
       // print("Exercicio cadastrado no bd do usuário!");
     } catch (error){
-      print("Deu o seguinte erro: $error");
+      SnackBarProvider().showError(error.toString());
+      // print("Deu o seguinte erro: $error");
     }
   }
 
@@ -108,6 +111,7 @@ class _SetDailyExercisesPageState extends State<SetDailyExercisesPage> {
     dbRef.child("Users/${widget.localId}/Exerciciododia/$day").onValue.listen((event) async {
       flag = event.snapshot.exists;
     });
+    // print(flag);
     return flag;
   }
 
@@ -126,14 +130,15 @@ class _SetDailyExercisesPageState extends State<SetDailyExercisesPage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 StreamBuilder(
-                  stream: dbRef.child("Users/${widget.localId}/Exerciciododia/$day").orderByKey().onValue,
-                  builder: (context, snapshot){
+                  stream: dbRef.child("Users/${widget.localId}/Exerciciododia/$day").onValue,
+                  builder: (context, AsyncSnapshot<DatabaseEvent> snapshot){
                     final tilesList = <Widget>[];
                     if (snapshot.hasData && isDailyExerciseConfigured) {
                       tilesList.add(Text("Exercícios de '$day' já adicionados:"));
                       tilesList.add(const SizedBox(height: 10,),);
-                      print("tem dados");
-                      final myExercises = (snapshot.data! as DatabaseEvent).snapshot.value as Map<Object, dynamic>;
+                      // print("tem dados");
+                      // final myExercises = (snapshot.data! as DatabaseEvent).snapshot.value as Map<Object, dynamic>;
+                      final Map<String,dynamic> myExercises = Map<String,dynamic>.from(jsonDecode(jsonEncode((snapshot.data!).snapshot.value)));
                       myExercises.forEach((key, value) {
                         final nextExercise = Map<String, dynamic>.from(value);
                         final exerciseCard = CardProvider(
@@ -153,7 +158,7 @@ class _SetDailyExercisesPageState extends State<SetDailyExercisesPage> {
                       });
                     }
                     else{
-                      print("nao tem dados");
+                      // print("nao tem dados");
                       return Container();
                     }
                     return ListView(
@@ -174,7 +179,7 @@ class _SetDailyExercisesPageState extends State<SetDailyExercisesPage> {
                           onChanged: (String? newValue) {
                             setState(() {
                               dropdownValue = newValue!;
-                              print(newValue);
+                              // print(newValue);
                             });
                           },
                           items: listOfExercises.map<DropdownMenuItem<String>>((String value) {
@@ -226,7 +231,7 @@ class _SetDailyExercisesPageState extends State<SetDailyExercisesPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Aluno ${user.displayName}"),
+        title: user?.displayName != null ? Text("Aluno ${user?.displayName}") : const Text("Aluno"),
       ),
       body: ContainerProvider(
         vertical: 10,
@@ -235,6 +240,7 @@ class _SetDailyExercisesPageState extends State<SetDailyExercisesPage> {
           children: <Widget> [
             CardProvider(
               title: const Text("Segunda Feira"),
+              //TODO: no celular, as informações visuais não atualizam quando tem ou não exercício configurado
               subtitle: isDailyExercise("Segunda-Feira") ? const Text("Configurado") : const Text("Não configurado"),
               borderColor: isDailyExercise("Segunda-Feira") ? const Color.fromARGB(255, 34, 187, 51) : const Color.fromARGB(255, 187, 33, 36),
               logo: isDailyExercise("Segunda-Feira") ? const Image(image: AssetImage('assets/images/exercise.png')) : const Image(image: AssetImage('assets/images/rest.png')),
@@ -307,6 +313,4 @@ class _SetDailyExercisesPageState extends State<SetDailyExercisesPage> {
       ),
     );
   }
-
-
 }

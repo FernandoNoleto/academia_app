@@ -20,27 +20,25 @@ databaseURL: 'academia-app-8ac31-default-rtdb.firebaseio.com'
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-
-  // await Firebase.initializeApp();
-  // if(Firebase.apps.length == 0){
-    await Firebase.initializeApp(
-      // name: "appacademia",
-      options: const FirebaseOptions(
-          apiKey: 'AIzaSyDNQN3CqKN52imrBElkpA2cd0bPt6JzmQw',
-          appId: '1:623652127430:android:90cd8fdf32703d36118dc7',
-          messagingSenderId: '623652127430',
-          projectId: 'academia-app-8ac31',
-          databaseURL: 'https://academia-app-8ac31-default-rtdb.firebaseio.com/',
-      ),
-    );
-  // }
+  // final Future<FirebaseApp> _fbApp = Firebase.initializeApp();
+  await Firebase.initializeApp(
+    options: const FirebaseOptions(
+      apiKey: 'AIzaSyDNQN3CqKN52imrBElkpA2cd0bPt6JzmQw',
+      appId: '1:623652127430:android:90cd8fdf32703d36118dc7',
+      messagingSenderId: '623652127430',
+      projectId: 'academia-app-8ac31',
+      databaseURL: 'https://academia-app-8ac31-default-rtdb.firebaseio.com/',
+    ),
+  );
 
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
   MyApp({Key? key}) : super(key: key);
+
+  // final Future<FirebaseApp> _fbApp = Firebase.initializeApp();
+
 
   @override
   Widget build(BuildContext context) {
