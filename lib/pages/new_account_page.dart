@@ -1,9 +1,16 @@
-import 'package:academiaapp/common/providers/snack_bar_provider.dart';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:firebase_database/firebase_database.dart';
+import 'package:http/http.dart' as http;
 
 /*Providers*/
+import 'package:academiaapp/common/providers/snack_bar_provider.dart';
 import 'package:academiaapp/common/providers/container_provider.dart';
 import 'package:academiaapp/common/providers/firebase_auth_provider.dart';
+
+/*Models*/
+import 'package:academiaapp/common/models/user.dart';
 
 class NewAccountPage extends StatefulWidget {
   const NewAccountPage({Key? key}) : super(key: key);
@@ -16,23 +23,75 @@ class _NewAccountPageState extends State<NewAccountPage> {
   final TextEditingController _nameInputController = TextEditingController();
   final TextEditingController _emailInputController = TextEditingController();
   final TextEditingController _passwordInputController = TextEditingController();
-  final TextEditingController _passwordPersonalInputController = TextEditingController();
-  bool _obscurePassword = true;
-  bool _isPersonal = false;
+  final TextEditingController _personalCodeInputController = TextEditingController();
+  late bool _obscurePassword = true;
+  late bool _obscurePersonalCode = true;
+  late bool _isPersonal = false;
   final _formKey = GlobalKey<FormState>();
+  final _dataBaseRef = FirebaseDatabase.instance.ref();
 
 
-  void _doSignUp() {
+  @override
+  void initState(){
+    super.initState();
+    _getPersonalCode();
+  }
+
+  Future<void> _doSignUp() async {
     if (_formKey.currentState!.validate()) {
-      SignUpProvider()
-          .signUp(
-          _emailInputController.text,
-          _passwordInputController.text,
-          _nameInputController.text
+      http.Response response = await SignUpProvider().signUp(
+        _emailInputController.text,
+        _passwordInputController.text,
+        _nameInputController.text,
       );
+      if(response.statusCode == 200){
+        User user = User.fromJson(jsonDecode(response.body));
+        // print(user);
+        _writeUserOnDatabase(user);
+      }
     } else {
-      SnackBarProvider().showWrongSignUp();
+      ScaffoldMessenger.of(context).showSnackBar(SnackBarProvider().showWrongSignUp());
     }
+  }
+
+  Future<void> _doSignUpAsPersonal() async {
+    if (_formKey.currentState!.validate() && _personalCodeInputController.text == _getPersonalCode()) {
+      http.Response response = await SignUpProvider().signUp(
+        _emailInputController.text,
+        _passwordInputController.text,
+        _nameInputController.text,
+      );
+      if(response.statusCode == 200){
+        User user = User.fromJson(jsonDecode(response.body));
+        user.isPersonal = true;
+        // print(user);
+        _writeUserOnDatabase(user);
+      }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBarProvider().showWrongSignUp());
+    }
+  }
+
+  _writeUserOnDatabase(User user) async {
+    final userRef = _dataBaseRef.child('/Users/${user.localId}');
+    try{
+      await userRef.update(user.toJson());
+      print("usuario escrito no BD!");
+    }
+    catch(error){
+      ScaffoldMessenger.of(context).showSnackBar(SnackBarProvider().showError(error.toString()));
+    }
+  }
+
+  String? _getPersonalCode(){
+    String? personalCode;
+
+    final userRef = _dataBaseRef.child('/Personalcode').onValue.listen((event) {
+      personalCode = event.snapshot.value as String?;
+    });
+
+
+    return personalCode;
   }
 
 
@@ -48,7 +107,7 @@ class _NewAccountPageState extends State<NewAccountPage> {
         vertical: 30,
         child: SingleChildScrollView(
           child: Column(
-            children: [
+            children: <Widget> [
               Form(
                 key: _formKey,
                 child: Column(
@@ -147,17 +206,17 @@ class _NewAccountPageState extends State<NewAccountPage> {
                     Visibility(
                       visible: _isPersonal,
                       child: TextFormField(
-                        obscureText: _obscurePassword,
-                        controller: _passwordPersonalInputController,
+                        obscureText: _obscurePersonalCode,
+                        controller: _personalCodeInputController,
                         decoration: InputDecoration(
                           suffixIcon: IconButton(
                             icon: Icon(
-                              _obscurePassword ? Icons.visibility_off: Icons.visibility,
+                              _obscurePersonalCode ? Icons.visibility_off: Icons.visibility,
                               color: Theme.of(context).primaryColorDark,
                             ),
                             onPressed: () {
                               setState(() {
-                                _obscurePassword = !_obscurePassword;
+                                _obscurePersonalCode = !_obscurePersonalCode;
                               });
                             },
                           ),
@@ -200,7 +259,7 @@ class _NewAccountPageState extends State<NewAccountPage> {
                         child: ElevatedButton(
                           child: const Text("Criar nova conta"),
                           onPressed: () {
-                            _doSignUp();
+                            _isPersonal ? _doSignUpAsPersonal() : _doSignUp();
                           },
                         ),
                       ),

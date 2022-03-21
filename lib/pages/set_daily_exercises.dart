@@ -40,11 +40,11 @@ class _SetDailyExercisesPageState extends State<SetDailyExercisesPage> {
   final dbRef = FirebaseDatabase.instance.ref();
   late Object? userObject;
   late Object? exerciseObject;
-  User? user;
+  late User? user;
   late Exercise exercise;
   late List<String> listOfExercises;
-  String dropdownValue = "";
-  String day = "";
+  late String dropdownValue = "";
+  late String day = "";
   late bool isDailyExerciseConfigured;
 
 

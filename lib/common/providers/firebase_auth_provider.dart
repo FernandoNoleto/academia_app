@@ -6,7 +6,6 @@ import 'package:academiaapp/common/providers/routes_provider.dart';
 
 
 class SignUpProvider{
-
   signUp(String email, String password, name) async {
     http.Response response = await http.post(
       Uri.parse(Routes().signUp()),
@@ -19,6 +18,7 @@ class SignUpProvider{
         },
       ),
     );
+    return response;
     print(response.body);
   }
 }

@@ -37,7 +37,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
   late Object? exerciseObject;
   late Object? exercisesObject;
   late User user;
-  late User userr;
+  // late User userr;
   late String exercise = "Exercicio";
   late String repetitions = "Repetições";
   late bool isDailyExerciseConfigured;

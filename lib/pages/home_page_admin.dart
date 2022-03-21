@@ -85,27 +85,29 @@ class _HomePageAdminState extends State<HomePageAdmin> {
               final Map<String,dynamic> myUsers = Map<String,dynamic>.from(jsonDecode(jsonEncode((snapshot.data!).snapshot.value)));
               myUsers.forEach((key, value) {
                 final nextUser = Map<String, dynamic>.from(value);
-                final userCard = CardProvider(
-                  title: Text(nextUser['displayName']),
-                  subtitle: const Text(""),
-                  logo: const Icon(Icons.account_circle, size: 32),
-                  borderColor: nextUser['haveConfiguredExercises'] ? const Color.fromARGB(255, 34, 187, 51) : const Color.fromARGB(255, 187, 33, 36),
-                  trailing: IconButton(
-                    tooltip: "Alternar exercício configurado",
-                    icon: nextUser['haveConfiguredExercises'] ? const Icon(Icons.check) : const Icon(Icons.clear),
-                    onPressed: () {
-                      nextUser['haveConfiguredExercises'] ? _toggleHaveConfiguredExercise(User.fromJson(value), false):_toggleHaveConfiguredExercise(User.fromJson(value), true);
+                if (nextUser['isPersonal'] != true){
+                  final userCard = CardProvider(
+                    title: Text(nextUser['displayName']),
+                    subtitle: const Text(""),
+                    logo: const Icon(Icons.account_circle, size: 32),
+                    borderColor: nextUser['haveConfiguredExercises'] ? const Color.fromARGB(255, 34, 187, 51) : const Color.fromARGB(255, 187, 33, 36),
+                    trailing: IconButton(
+                      tooltip: "Alternar exercício configurado",
+                      icon: nextUser['haveConfiguredExercises'] ? const Icon(Icons.check) : const Icon(Icons.clear),
+                      onPressed: () {
+                        nextUser['haveConfiguredExercises'] ? _toggleHaveConfiguredExercise(User.fromJson(value), false):_toggleHaveConfiguredExercise(User.fromJson(value), true);
+                      },
+                    ),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => SetDailyExercisesPage(localId: nextUser['localId'], list: listOfExercises),),
+                      );
                     },
-                  ),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => SetDailyExercisesPage(localId: nextUser['localId'], list: listOfExercises),),
-                    );
-                  },
-                );
-                tilesList.add(userCard);
-                tilesList.add(const SizedBox(height: 10,),);
+                  );
+                  tilesList.add(userCard);
+                  tilesList.add(const SizedBox(height: 10,),);
+                }
               });
             }
             else{

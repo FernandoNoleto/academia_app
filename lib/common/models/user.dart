@@ -57,6 +57,6 @@ class User {
 
   @override
   toString(){
-    return 'Nome: $displayName, uid: $localId, configExercise: $haveConfiguredExercises';
+    return 'displayName: $displayName, localId: $localId, haveConfiguredExercises: $haveConfiguredExercises, isPersonal: $isPersonal';
   }
 }

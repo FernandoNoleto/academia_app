@@ -1,4 +1,5 @@
 import 'package:academiaapp/common/providers/snack_bar_provider.dart';
+import 'package:academiaapp/pages/home_page_admin.dart';
 import 'package:flutter/material.dart';
 
 /*Pages*/
@@ -30,8 +31,9 @@ class LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _mailInputController = TextEditingController();
   final TextEditingController _passwordInputController = TextEditingController();
-  bool _obscurePassword = true;
-  bool _isPersonal = false;
+  late bool _obscurePassword = true;
+  // late bool _isPersonal = false;
+  late Object? userObject;
 
   final database = FirebaseDatabase.instance.ref();
 
@@ -42,25 +44,44 @@ class LoginPageState extends State<LoginPage> {
     if (_formKey.currentState!.validate()) {
       return await LoginService().login(_mailInputController.text, _passwordInputController.text);
     } else {
-      SnackBarProvider().showWrongLogIn();
+      ScaffoldMessenger.of(context).showSnackBar(SnackBarProvider().showWrongLogIn());
     }
   }
 
-  _writeUserOnDatabase(User user) {
-
-    final userRef = database.child('/Users/${user.localId}');
+  _getUser(User user){
+    final userRef = database.child("/Users/${user.localId}");
     try{
-      userRef.onValue.listen((event) async {
-        var userObject = event.snapshot.value;
+      userRef.onValue.listen((event) {
+        userObject = event.snapshot.value;
         user = User.fromJson(jsonDecode(jsonEncode(Map<String, dynamic>.from(userObject as Map<dynamic, dynamic>))));
-        await userRef.update(user.toJson());
-        // print(user);
       });
+      return user;
     }
     catch(error){
-      SnackBarProvider().showError(error.toString());
+      print(error);
     }
   }
+
+  // _writeUserOnDatabase(User user) {
+  //   final userRef = database.child('/Users/${user.localId}');
+  //   try{
+  //     userRef.onValue.listen((event) {
+  //       if (event.snapshot.exists){
+  //         userObject = event.snapshot.value;
+  //         user = User.fromJson(jsonDecode(jsonEncode(Map<String, dynamic>.from(userObject as Map<dynamic, dynamic>))));
+  //         userRef.update(user.toJson());
+  //         print("usuario atualizado no BD!");
+  //       }
+  //       else{
+  //         userRef.update(user.toJson());
+  //         print("usuario escrito no BD!");
+  //       }
+  //     });
+  //   }
+  //   catch(error){
+  //     ScaffoldMessenger.of(context).showSnackBar(SnackBarProvider().showError(error.toString()));
+  //   }
+  // }
 
 
 
@@ -147,21 +168,21 @@ class LoginPageState extends State<LoginPage> {
                       ),
                     ),
                     const SizedBox(height: 10,),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: <Widget>[
-                        Checkbox(
-                          checkColor: Colors.white,
-                          value: _isPersonal,
-                          onChanged: (bool? value) {
-                            setState(() {
-                              _isPersonal = value!;
-                            });
-                          },
-                        ),
-                        const Text("Login como Personal"),
-                      ],
-                    ),
+                    // Row(
+                    //   mainAxisAlignment: MainAxisAlignment.end,
+                    //   children: <Widget>[
+                    //     Checkbox(
+                    //       checkColor: Colors.white,
+                    //       value: _isPersonal,
+                    //       onChanged: (bool? value) {
+                    //         setState(() {
+                    //           _isPersonal = value!;
+                    //         });
+                    //       },
+                    //     ),
+                    //     const Text("Login como Personal"),
+                    //   ],
+                    // ),
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 16.0),
                       child: FractionallySizedBox(
@@ -171,14 +192,13 @@ class LoginPageState extends State<LoginPage> {
                           onPressed: () async {
                             http.Response response = await _doLogin();
                             if (response.statusCode == 200){
-                              print(response.body);
-                              User user = User.fromJson(jsonDecode(response.body));
-                              // print(user.toString());
-                              _writeUserOnDatabase(user);
+                              // User user = User.fromJson(jsonDecode(response.body));
+                              User user = _getUser(User.fromJson(jsonDecode(response.body)));
+                              print(user);
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => HomePage(name: user.displayName, localId: user.localId,),
+                                  builder: (context) => user.isPersonal! ? const HomePageAdmin() : HomePage(name: user.displayName, localId: user.localId,),
                                 ),
                               );
                             } else {
