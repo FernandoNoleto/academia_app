@@ -1,15 +1,15 @@
-import 'package:academiaapp/common/models/day.dart';
-
 class User {
   final String displayName;
   final String localId;
   late bool? haveConfiguredExercises;
+  late bool? isPersonal;
   // late List<Day>? days;
 
   User({
     required this.displayName,
     required this.localId,
     this.haveConfiguredExercises,
+    this.isPersonal,
     // this.days = const [],
   });
 
@@ -19,6 +19,7 @@ class User {
       localId: json['localId'],
       displayName: json['displayName'],
       haveConfiguredExercises: json['haveConfiguredExercises'] ?? false,
+      isPersonal: json['isPersonal'] ?? false,
     );
 
     // if (json['days'] != null) {
@@ -49,6 +50,7 @@ class User {
     data['displayName'] = displayName;
     data['localId'] = localId;
     data['haveConfiguredExercises'] = haveConfiguredExercises;
+    data['isPersonal'] = isPersonal;
     // data['days'] = days!.map((v) => v.toJson()).toList();
     return data;
   }

@@ -1,7 +1,6 @@
+import 'package:flutter/material.dart';
 import 'package:academiaapp/pages/detailed_exercise_page.dart';
 import 'package:academiaapp/pages/home_page_admin.dart';
-import 'package:flutter/material.dart';
-import 'package:academiaapp/pages/set_daily_exercises.dart';
 import 'package:academiaapp/pages/home_page.dart';
 import 'package:academiaapp/pages/login_page.dart';
 
@@ -18,9 +17,9 @@ storageBucket: 'academia-app-8ac31.appspot.com',
 databaseURL: 'academia-app-8ac31-default-rtdb.firebaseio.com'
 */
 
-Future<void> main() async {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // final Future<FirebaseApp> _fbApp = Firebase.initializeApp();
+  // await Firebase.initializeApp();
   await Firebase.initializeApp(
     options: const FirebaseOptions(
       apiKey: 'AIzaSyDNQN3CqKN52imrBElkpA2cd0bPt6JzmQw',
@@ -37,8 +36,6 @@ Future<void> main() async {
 class MyApp extends StatelessWidget {
   MyApp({Key? key}) : super(key: key);
 
-  // final Future<FirebaseApp> _fbApp = Firebase.initializeApp();
-
 
   @override
   Widget build(BuildContext context) {
@@ -46,8 +43,8 @@ class MyApp extends StatelessWidget {
       title: 'Gym App',
       theme: ThemeData(fontFamily: 'Fredoka'),
       // home: const DetailedExercisePage(),
-      // home: const LoginPage(),
-      home: const HomePageAdmin(),
+      home: const LoginPage(),
+      // home: const HomePageAdmin(),
       // home: HomePage(name: "Fernando", uid: "ID",),
       debugShowCheckedModeBanner: false,
     );

@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:academiaapp/common/models/exercise.dart';
 import 'package:academiaapp/common/models/user.dart';
 import 'package:academiaapp/common/providers/container_provider.dart';
 import 'package:academiaapp/common/providers/firebase_storage.dart';
@@ -47,14 +46,14 @@ class _HomePageAdminState extends State<HomePageAdmin> {
     super.deactivate();
   }
 
-  Future _activateListeners() async {
-    _srtmSubscription = _dataBaseRef.child("exerciciododia").onValue.listen((event) {
-      final data = Map<String, dynamic>.from(jsonDecode(jsonEncode(event.snapshot.value)));
-      final exercise = data['exercise'] as String;
-      final repetitions = data['repetitions'] as String;
-      final interval = data['interval'] as String;
-    });
-  }
+  // Future _activateListeners() async {
+  //   _srtmSubscription = _dataBaseRef.child("exerciciododia").onValue.listen((event) {
+  //     final data = Map<String, dynamic>.from(jsonDecode(jsonEncode(event.snapshot.value)));
+  //     final exercise = data['exercise'] as String;
+  //     final repetitions = data['repetitions'] as String;
+  //     final interval = data['interval'] as String;
+  //   });
+  // }
 
   _toggleHaveConfiguredExercise(User user, bool toggle) async{
     final userRef = _dataBaseRef.child('/Users/${user.localId}');
@@ -85,7 +84,6 @@ class _HomePageAdminState extends State<HomePageAdmin> {
               // final myUsers = (snapshot.data!).snapshot.value as Map<String,dynamic>;
               final Map<String,dynamic> myUsers = Map<String,dynamic>.from(jsonDecode(jsonEncode((snapshot.data!).snapshot.value)));
               myUsers.forEach((key, value) {
-                print("Key: $key, Value: $value");
                 final nextUser = Map<String, dynamic>.from(value);
                 final userCard = CardProvider(
                   title: Text(nextUser['displayName']),

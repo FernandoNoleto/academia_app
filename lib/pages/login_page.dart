@@ -31,6 +31,7 @@ class LoginPageState extends State<LoginPage> {
   final TextEditingController _mailInputController = TextEditingController();
   final TextEditingController _passwordInputController = TextEditingController();
   bool _obscurePassword = true;
+  bool _isPersonal = false;
 
   final database = FirebaseDatabase.instance.ref();
 
@@ -145,6 +146,22 @@ class LoginPageState extends State<LoginPage> {
                         ),
                       ),
                     ),
+                    const SizedBox(height: 10,),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: <Widget>[
+                        Checkbox(
+                          checkColor: Colors.white,
+                          value: _isPersonal,
+                          onChanged: (bool? value) {
+                            setState(() {
+                              _isPersonal = value!;
+                            });
+                          },
+                        ),
+                        const Text("Login como Personal"),
+                      ],
+                    ),
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 16.0),
                       child: FractionallySizedBox(
@@ -156,7 +173,7 @@ class LoginPageState extends State<LoginPage> {
                             if (response.statusCode == 200){
                               print(response.body);
                               User user = User.fromJson(jsonDecode(response.body));
-                              print(user.toString());
+                              // print(user.toString());
                               _writeUserOnDatabase(user);
                               Navigator.push(
                                 context,
