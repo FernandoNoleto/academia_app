@@ -1,4 +1,6 @@
+import 'package:academiaapp/common/providers/snack_bar_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:academiaapp/common/providers/container_provider.dart';
 
@@ -11,6 +13,7 @@ class ForgotPasswordPage extends StatefulWidget {
 }
 
 class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
+  final TextEditingController _emailController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -36,12 +39,13 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                     ),
                     const SizedBox(height: 10),
                     TextFormField(
+                      controller: _emailController,
                       autofocus: true,
                       decoration: const InputDecoration(
                         hintText: 'Insira seu email',
                         focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                            borderSide: BorderSide(color: Colors.blue)
+                          borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                          borderSide: BorderSide(color: Colors.blue),
                         ),
                         filled: true,
                         contentPadding:
@@ -67,6 +71,13 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                           child: const Text("Recuperar senha"),
                           onPressed: () {
                             //TODO: implementar função de recuperar senha
+                            if (_emailController.text != null && _emailController.text.isNotEmpty){
+                              FirebaseAuth.instance.sendPasswordResetEmail(email: _emailController.text);
+                              ScaffoldMessenger.of(context).showSnackBar(SnackBarProvider().showMessage("Foi enviado um email para recuperar sua senha!"));
+                            }
+                            else{
+                              ScaffoldMessenger.of(context).showSnackBar(SnackBarProvider().showMessage("Email inválido"));
+                            }
                           },
                         ),
                       ),
