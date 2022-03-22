@@ -48,19 +48,40 @@ class LoginPageState extends State<LoginPage> {
     }
   }
 
-  _getUser(User user){
-    final userRef = database.child("/Users/${user.localId}");
-    try{
-      userRef.onValue.listen((event) {
-        userObject = event.snapshot.value;
-        user = User.fromJson(jsonDecode(jsonEncode(Map<String, dynamic>.from(userObject as Map<dynamic, dynamic>))));
-      });
-      return user;
-    }
-    catch(error){
-      print(error);
-    }
-  }
+  // _getUser(User user){
+  //   final userRef = database.child("/Users/${user.localId}");
+  //
+  //   try{
+  //     userRef.onValue.listen((event) {
+  //       userObject = event.snapshot.value;
+  //       user = User.fromJson(jsonDecode(jsonEncode(Map<String, dynamic>.from(userObject as Map<dynamic, dynamic>))));
+  //     });
+  //     return user;
+  //   }
+  //   catch(error){
+  //     print(error);
+  //   }
+  // }
+
+  // Future<User> _getUser(User user) async{
+  //   // final userRef = database.child("/Users/${user.localId}");
+  //   // DatabaseReference ref = FirebaseDatabase.instance.ref("/Users/${user.localId}");
+  //   User usuario;
+  //
+  //   try {
+  //     DatabaseEvent event = await FirebaseDatabase.instance.ref("/Users/${user.localId}").once();
+  //     // userObject = event.snapshot.value;
+  //     user = User.fromJson(jsonDecode(jsonEncode(Map<String, dynamic>.from(event.snapshot.value as Map<dynamic, dynamic>))));
+  //     print(user);
+  //     print("--------");
+  //     print(user.runtimeType);
+  //     return user;
+  //   }
+  //   catch(error){
+  //     print(error);
+  //     return usuario;
+  //   }
+  // }
 
   // _writeUserOnDatabase(User user) {
   //   final userRef = database.child('/Users/${user.localId}');
@@ -192,9 +213,12 @@ class LoginPageState extends State<LoginPage> {
                           onPressed: () async {
                             http.Response response = await _doLogin();
                             if (response.statusCode == 200){
-                              // User user = User.fromJson(jsonDecode(response.body));
-                              User user = _getUser(User.fromJson(jsonDecode(response.body)));
-                              print(user);
+                              print(response.body);
+                              User user = User.fromJson(jsonDecode(response.body));
+                              DatabaseEvent event = await FirebaseDatabase.instance.ref("/Users/${user.localId}").once();
+                              user = User.fromJson(jsonDecode(jsonEncode(Map<String, dynamic>.from(event.snapshot.value as Map<dynamic, dynamic>))));
+                              // print(user);
+                              // print("---------------");
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -203,7 +227,9 @@ class LoginPageState extends State<LoginPage> {
                               );
                             } else {
                               ScaffoldMessenger.of(context).showSnackBar(SnackBarProvider().showWrongLogIn());
-                              throw Exception('Login inválido');
+                              _mailInputController.text = "";
+                              _passwordInputController.text = "";
+                              // throw Exception('Login inválido');
                             }
                           },
                         ),

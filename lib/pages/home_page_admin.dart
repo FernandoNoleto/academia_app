@@ -26,7 +26,7 @@ class HomePageAdmin extends StatefulWidget {
 class _HomePageAdminState extends State<HomePageAdmin> {
 
   final _dataBaseRef = FirebaseDatabase.instance.ref();
-  late StreamSubscription _srtmSubscription;
+  // late StreamSubscription _srtmSubscription;
   late List listOfUsers = [];
   late List<String> listOfExercises = [];
 
@@ -40,11 +40,11 @@ class _HomePageAdminState extends State<HomePageAdmin> {
     // listOfUsers = _getListOfUsers();
   }
 
-  @override
-  void deactivate(){
-    _srtmSubscription.cancel();
-    super.deactivate();
-  }
+  // @override
+  // void deactivate(){
+  //   _srtmSubscription.cancel();
+  //   super.deactivate();
+  // }
 
   // Future _activateListeners() async {
   //   _srtmSubscription = _dataBaseRef.child("exerciciododia").onValue.listen((event) {
@@ -65,6 +65,7 @@ class _HomePageAdminState extends State<HomePageAdmin> {
       print("Deu o seguinte erro: $error");
     }
   }
+
 
 
   @override

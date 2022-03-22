@@ -59,9 +59,9 @@ class _SetDailyExercisesPageState extends State<SetDailyExercisesPage> {
   void _getUser(String id) async{
     dbRef.child("Users/$id").onValue.listen((event) {
       userObject = event.snapshot.value;
-      setState(() {
-        user = User.fromJson(jsonDecode(jsonEncode(Map<String, dynamic>.from(userObject as Map<dynamic, dynamic>))));
-      });
+      // setState(() {
+      user = User.fromJson(jsonDecode(jsonEncode(Map<String, dynamic>.from(userObject as Map<dynamic, dynamic>))));
+      // });
     });
   }
 

@@ -15,7 +15,7 @@ class FirebaseStorageProvider{
       final description = event.snapshot.children;
       for (var element in description) {
         exercise = Exercise.fromJson(jsonDecode(jsonEncode(Map<String, dynamic>.from(element.value as Map<dynamic, dynamic>))));
-        print(exercise.name);
+        // print(exercise.name);
         exercises.add(exercise.name);
       }
     });
