@@ -174,36 +174,20 @@ class LoginPageState extends State<LoginPage> {
                         ),
                         hintText: 'Insira seu senha',
                         focusedBorder: const OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                            borderSide: BorderSide(color: Colors.blue)
-
+                          borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                          borderSide: BorderSide(color: Colors.blue),
                         ),
                         filled: true,
                         contentPadding:
                         const EdgeInsets.only(bottom: 10.0, left: 10.0, right: 10.0),
                         labelText: "Senha",
                         prefixIcon: const Icon(
-                          Icons.vpn_key_sharp,
+                          Icons.password_outlined,
                           color: Colors.blue,
                         ),
                       ),
                     ),
                     const SizedBox(height: 10,),
-                    // Row(
-                    //   mainAxisAlignment: MainAxisAlignment.end,
-                    //   children: <Widget>[
-                    //     Checkbox(
-                    //       checkColor: Colors.white,
-                    //       value: _isPersonal,
-                    //       onChanged: (bool? value) {
-                    //         setState(() {
-                    //           _isPersonal = value!;
-                    //         });
-                    //       },
-                    //     ),
-                    //     const Text("Login como Personal"),
-                    //   ],
-                    // ),
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 16.0),
                       child: FractionallySizedBox(

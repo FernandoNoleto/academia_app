@@ -40,7 +40,7 @@ class _SetDailyExercisesPageState extends State<SetDailyExercisesPage> {
   final dbRef = FirebaseDatabase.instance.ref();
   late Object? userObject;
   late Object? exerciseObject;
-  late User? user;
+  User? user;
   late Exercise exercise;
   late List<String> listOfExercises;
   late String dropdownValue = "";
@@ -49,19 +49,23 @@ class _SetDailyExercisesPageState extends State<SetDailyExercisesPage> {
 
 
   @override
-  void initState(){
+  void initState() {
     super.initState();
-    _getUser(widget.localId);
+    _getUser();
     widget.list.isNotEmpty ? listOfExercises = widget.list : listOfExercises.add(""); // Lista é carregada desde a tela anterior
     dropdownValue = listOfExercises.first;
   }
 
-  void _getUser(String id) async{
-    dbRef.child("Users/$id").onValue.listen((event) {
-      userObject = event.snapshot.value;
-      // setState(() {
-      user = User.fromJson(jsonDecode(jsonEncode(Map<String, dynamic>.from(userObject as Map<dynamic, dynamic>))));
-      // });
+  void _getUser() async{
+    // dbRef.child("Users/$id").onValue.listen((event) {
+    //   userObject = event.snapshot.value;
+    //   // setState(() {
+    //   user = User.fromJson(jsonDecode(jsonEncode(Map<String, dynamic>.from(userObject as Map<dynamic, dynamic>))));
+    //   // });
+    // });
+    DatabaseEvent event = await FirebaseDatabase.instance.ref("/Users/${widget.localId}").once();
+    setState(() {
+      user = User.fromJson(jsonDecode(jsonEncode(Map<String, dynamic>.from(event.snapshot.value as Map<dynamic, dynamic>))));
     });
   }
 
@@ -78,30 +82,30 @@ class _SetDailyExercisesPageState extends State<SetDailyExercisesPage> {
 
   void _deleteExercise(String nameExercise, day) {
     showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text('Confirmar exclusão'),
-            content: Text("Tem certeza que deseja excluir o exercício '$nameExercise'?"),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  setState(() {
-                    dbRef.child("Users/${widget.localId}/Exerciciododia/$day/$nameExercise").remove();
-                  });
-                  Navigator.of(context).pop();
-                },
-                child: const Text('Sim'),
-              ),
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: const Text('Não'),
-              ),
-            ],
-          );
-        }
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Confirmar exclusão'),
+          content: Text("Tem certeza que deseja excluir o exercício '$nameExercise'?"),
+          actions: [
+            TextButton(
+              onPressed: () {
+                setState(() {
+                  dbRef.child("Users/${widget.localId}/Exerciciododia/$day/$nameExercise").remove();
+                });
+                Navigator.of(context).pop();
+              },
+              child: const Text('Sim'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Não'),
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -227,7 +231,7 @@ class _SetDailyExercisesPageState extends State<SetDailyExercisesPage> {
     );
   }
 
-  @override
+   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(

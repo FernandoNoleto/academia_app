@@ -19,16 +19,16 @@ databaseURL: 'academia-app-8ac31-default-rtdb.firebaseio.com'
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // await Firebase.initializeApp();
-  await Firebase.initializeApp(
-    options: const FirebaseOptions(
-      apiKey: 'AIzaSyDNQN3CqKN52imrBElkpA2cd0bPt6JzmQw',
-      appId: '1:623652127430:android:90cd8fdf32703d36118dc7',
-      messagingSenderId: '623652127430',
-      projectId: 'academia-app-8ac31',
-      databaseURL: 'https://academia-app-8ac31-default-rtdb.firebaseio.com/',
-    ),
-  );
+  await Firebase.initializeApp();
+  // await Firebase.initializeApp(
+  //   options: const FirebaseOptions(
+  //     apiKey: 'AIzaSyDNQN3CqKN52imrBElkpA2cd0bPt6JzmQw',
+  //     appId: '1:623652127430:android:90cd8fdf32703d36118dc7',
+  //     messagingSenderId: '623652127430',
+  //     projectId: 'academia-app-8ac31',
+  //     databaseURL: 'https://academia-app-8ac31-default-rtdb.firebaseio.com/',
+  //   ),
+  // );
 
   runApp(MyApp());
 }

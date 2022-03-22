@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:academiaapp/common/models/user.dart';
 import 'package:academiaapp/common/providers/container_provider.dart';
 import 'package:academiaapp/common/providers/firebase_storage.dart';
+import 'package:academiaapp/common/providers/snack_bar_provider.dart';
+import 'package:academiaapp/pages/login_page.dart';
 import 'package:academiaapp/pages/register_exercises.dart';
 import 'package:academiaapp/pages/set_daily_exercises.dart';
 import 'package:flutter/material.dart';
@@ -35,9 +37,6 @@ class _HomePageAdminState extends State<HomePageAdmin> {
   void initState(){
     super.initState();
     listOfExercises = FirebaseStorageProvider().getExercises();
-    // _getListOfUsers();
-    // _activateListeners();
-    // listOfUsers = _getListOfUsers();
   }
 
   // @override
@@ -66,13 +65,94 @@ class _HomePageAdminState extends State<HomePageAdmin> {
     }
   }
 
-
+  void _changePersonalCode() {
+    final TextEditingController codeInputController = TextEditingController();
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context){
+        return ContainerProvider(
+          horizontal: 10,
+          vertical: 10,
+          child: SingleChildScrollView(
+            child: Column(
+              children: <Widget>[
+                const SizedBox(height: 10,),
+                TextFormField(
+                  controller: codeInputController,
+                  autofocus: true,
+                  decoration: const InputDecoration(
+                    hintText: 'Novo código',
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                      borderSide: BorderSide(color: Colors.blue),
+                    ),
+                    filled: true,
+                    contentPadding:
+                    EdgeInsets.only(bottom: 10.0, left: 10.0, right: 10.0),
+                    labelText: "Novo código",
+                    prefixIcon: Icon(
+                      Icons.vpn_key_sharp,
+                      color: Colors.blue,
+                    ),
+                  ),
+                  validator: (String? code) {
+                    if (code == null || code.isEmpty) {
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBarProvider().showMessage("Código do personal inválido!"));
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 10,),
+                ElevatedButton(
+                  child: const Text('Ok'),
+                  onPressed: () async {
+                    final personalCodeRef = FirebaseDatabase.instance.ref();
+                    await personalCodeRef.update({"Personalcode": codeInputController.text});
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBarProvider().showMessage("Código do personal alterado!"));
+                    Navigator.pop(context);
+                  },
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Area do Personal"),
+        actions: <Widget>[
+          Padding(
+            padding: const EdgeInsets.only(right: 10.0),
+            child: IconButton(
+              tooltip: "Alterar código",
+              onPressed: () {
+                _changePersonalCode();
+              },
+              icon: const Icon(
+                Icons.settings_outlined,
+                size: 22.0,
+              ),
+            ),
+          ),
+          // Padding(
+          //   padding: const EdgeInsets.only(right: 20.0),
+          //   child: IconButton(
+          //     tooltip: "Sair",
+          //     onPressed: () {
+          //       Navigator.pop(context);
+          //     },
+          //     icon: const Icon(
+          //       Icons.logout_outlined,
+          //       size: 22.0,
+          //     ),
+          //   ),
+          // ),
+        ],
       ),
       body: ContainerProvider(
         vertical: 10,
@@ -141,4 +221,5 @@ class _HomePageAdminState extends State<HomePageAdmin> {
       ),
     );
   }
+
 }

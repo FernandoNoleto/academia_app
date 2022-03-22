@@ -39,7 +39,7 @@ class SnackBarProvider{
   }
 
   SnackBar showError(String error){
-    SnackBar showExerciseConfirmAlert = SnackBar(
+    SnackBar showError = SnackBar(
       // ignore: unnecessary_string_escapes
       content: Text("Erro: "+error),
       action: SnackBarAction(
@@ -47,11 +47,11 @@ class SnackBarProvider{
         onPressed: () {},
       ),
     );
-    return showExerciseConfirmAlert;
+    return showError;
   }
 
   SnackBar showWrongSignUp(){
-    SnackBar showExerciseConfirmAlert = SnackBar(
+    SnackBar showWrongSignUp = SnackBar(
       // ignore: unnecessary_string_escapes
       content: const Text("Erro ao tentar efetuar o cadastro"),
       action: SnackBarAction(
@@ -59,9 +59,20 @@ class SnackBarProvider{
         onPressed: () {},
       ),
     );
-    return showExerciseConfirmAlert;
+    return showWrongSignUp;
   }
 
+  SnackBar showMessage(message){
+    SnackBar showMessage = SnackBar(
+      // ignore: unnecessary_string_escapes
+      content: Text(message),
+      action: SnackBarAction(
+        label: "Ok",
+        onPressed: () {},
+      ),
+    );
+    return showMessage;
+  }
 
 
 }
