@@ -40,13 +40,12 @@ class _NewAccountPageState extends State<NewAccountPage> {
   Future<void> _doSignUp() async {
     if (_formKey.currentState!.validate()) {
       http.Response response = await SignUpProvider().signUp(
-        _emailInputController.text,
+        _emailInputController.text.trim(),
         _passwordInputController.text,
         _nameInputController.text,
       );
       if(response.statusCode == 200){
         User user = User.fromJson(jsonDecode(response.body));
-        // print(user);
         _writeUserOnDatabase(user);
       }
     } else {
@@ -57,14 +56,13 @@ class _NewAccountPageState extends State<NewAccountPage> {
   Future<void> _doSignUpAsPersonal() async {
     if (_formKey.currentState!.validate() && _personalCodeInputController.text == _getPersonalCode()) {
       http.Response response = await SignUpProvider().signUp(
-        _emailInputController.text,
+        _emailInputController.text.trim(),
         _passwordInputController.text,
         _nameInputController.text,
       );
       if(response.statusCode == 200){
         User user = User.fromJson(jsonDecode(response.body));
         user.isPersonal = true;
-        // print(user);
         _writeUserOnDatabase(user);
       }
     } else {
@@ -76,7 +74,8 @@ class _NewAccountPageState extends State<NewAccountPage> {
     final userRef = _dataBaseRef.child('/Users/${user.localId}');
     try{
       await userRef.update(user.toJson());
-      print("usuario escrito no BD!");
+      ScaffoldMessenger.of(context).showSnackBar(SnackBarProvider().showMessage("Usuário criado com sucesso!"));
+      // print("usuario escrito no BD!");
     }
     catch(error){
       ScaffoldMessenger.of(context).showSnackBar(SnackBarProvider().showError(error.toString()));
@@ -124,8 +123,8 @@ class _NewAccountPageState extends State<NewAccountPage> {
                       decoration: const InputDecoration(
                         hintText: 'Insira seu nome',
                         focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                            borderSide: BorderSide(color: Colors.blue)
+                          borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                          borderSide: BorderSide(color: Colors.blue),
                         ),
                         filled: true,
                         contentPadding:
@@ -260,6 +259,7 @@ class _NewAccountPageState extends State<NewAccountPage> {
                           child: const Text("Criar nova conta"),
                           onPressed: () {
                             _isPersonal ? _doSignUpAsPersonal() : _doSignUp();
+                            Navigator.of(context).pop();
                           },
                         ),
                       ),

@@ -70,8 +70,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                         child: ElevatedButton(
                           child: const Text("Recuperar senha"),
                           onPressed: () {
-                            //TODO: implementar função de recuperar senha
-                            if (_emailController.text != null && _emailController.text.isNotEmpty){
+                            if (_emailController.text.isNotEmpty && _emailController.text != ""){
                               FirebaseAuth.instance.sendPasswordResetEmail(email: _emailController.text);
                               ScaffoldMessenger.of(context).showSnackBar(SnackBarProvider().showMessage("Foi enviado um email para recuperar sua senha!"));
                             }

@@ -7,6 +7,7 @@ import 'package:academiaapp/common/providers/snack_bar_provider.dart';
 import 'package:academiaapp/pages/login_page.dart';
 import 'package:academiaapp/pages/register_exercises.dart';
 import 'package:academiaapp/pages/set_daily_exercises.dart';
+import 'package:firebase_auth/firebase_auth.dart' as fb_auth;
 import 'package:flutter/material.dart';
 
 
@@ -54,7 +55,7 @@ class _HomePageAdminState extends State<HomePageAdmin> {
   //   });
   // }
 
-  _toggleHaveConfiguredExercise(User user, bool toggle) async{
+  void _toggleHaveConfiguredExercise(User user, bool toggle) async{
     final userRef = _dataBaseRef.child('/Users/${user.localId}');
     try{
       user.haveConfiguredExercises = toggle;
@@ -139,19 +140,20 @@ class _HomePageAdminState extends State<HomePageAdmin> {
               ),
             ),
           ),
-          // Padding(
-          //   padding: const EdgeInsets.only(right: 20.0),
-          //   child: IconButton(
-          //     tooltip: "Sair",
-          //     onPressed: () {
-          //       Navigator.pop(context);
-          //     },
-          //     icon: const Icon(
-          //       Icons.logout_outlined,
-          //       size: 22.0,
-          //     ),
-          //   ),
-          // ),
+          Padding(
+            padding: const EdgeInsets.only(right: 20.0),
+            child: IconButton(
+              tooltip: "Sair",
+              onPressed: () async {
+                await fb_auth.FirebaseAuth.instance.signOut();
+                Navigator.pop(context);
+              },
+              icon: const Icon(
+                Icons.logout_outlined,
+                size: 22.0,
+              ),
+            ),
+          ),
         ],
       ),
       body: ContainerProvider(

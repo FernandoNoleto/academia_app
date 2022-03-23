@@ -12,6 +12,7 @@ import 'package:academiaapp/common/models/user.dart';
 
 
 /*Plugins*/
+import 'package:firebase_auth/firebase_auth.dart' as fb_auth;
 import 'package:firebase_database/firebase_database.dart';
 import 'package:intl/intl.dart';
 import 'dart:convert';
@@ -90,6 +91,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: Center(
           child: Text("Bem vindo de volta ${widget.name}",
             textAlign: TextAlign.center,
@@ -98,6 +100,22 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
             ),
           ),
         ),
+        actions: <Widget>[
+          Padding(
+            padding: const EdgeInsets.only(right: 10.0),
+            child: IconButton(
+              tooltip: "Sair",
+              onPressed: () async {
+                await fb_auth.FirebaseAuth.instance.signOut();
+                Navigator.pop(context);
+              },
+              icon: const Icon(
+                Icons.logout_outlined,
+                size: 22.0,
+              ),
+            ),
+          ),
+        ],
       ),
       body: ContainerProvider(
         vertical: 10,
@@ -111,7 +129,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
                 height: 210,
                 decoration: const BoxDecoration(
                   image: DecorationImage(
-                    image: AssetImage('images/exercise-icon.png'),
+                    image: AssetImage('assets/images/exercise-icon.png'),
                     fit: BoxFit.fitWidth,
                   ),
                 ),
@@ -169,11 +187,12 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
                 vertical: 30,
                 child: StreamBuilder(
                   stream: _dataBaseRef.child("Users/${widget.localId}/Exerciciododia/${_getDayOfWeek()}").orderByKey().onValue,
-                  builder: (context, snapshot){
+                  builder: (context, AsyncSnapshot<DatabaseEvent> snapshot){
                     final tilesList = <Widget>[];
                     if (snapshot.hasData && isDailyExerciseConfigured) {
                       print("tem dados");
-                      final myExercises = (snapshot.data! as DatabaseEvent).snapshot.value as Map<Object, dynamic>;
+                      // final myExercises = (snapshot.data! as DatabaseEvent).snapshot.value as Map<Object, dynamic>;
+                      final Map<String,dynamic> myExercises = Map<String,dynamic>.from(jsonDecode(jsonEncode((snapshot.data!).snapshot.value)));
                       myExercises.forEach((key, value) {
                         final nextExercise = Map<String, dynamic>.from(value);
                         final exerciseCard = CardProvider(
@@ -194,18 +213,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin{
                     }
                     else{
                       print("nao tem dados");
-                      return Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: const <Widget>[
-                            Text(
-                              "Seu personal não passou exercícios para este dia",
-                              style: TextStyle(
-                                fontSize: 28,
-                              ),
-                            ),
-                          ],
+                      return const Text(
+                        "Seu personal não passou exercícios para este dia",
+                        style: TextStyle(
+                          fontSize: 28,
                         ),
                       );
                     }

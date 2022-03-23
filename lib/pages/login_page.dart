@@ -42,67 +42,11 @@ class LoginPageState extends State<LoginPage> {
 
   _doLogin() async {
     if (_formKey.currentState!.validate()) {
-      return await LoginService().login(_mailInputController.text, _passwordInputController.text);
+      return await LoginService().login(_mailInputController.text.trim(), _passwordInputController.text.trim());
     } else {
       ScaffoldMessenger.of(context).showSnackBar(SnackBarProvider().showWrongLogIn());
     }
   }
-
-  // _getUser(User user){
-  //   final userRef = database.child("/Users/${user.localId}");
-  //
-  //   try{
-  //     userRef.onValue.listen((event) {
-  //       userObject = event.snapshot.value;
-  //       user = User.fromJson(jsonDecode(jsonEncode(Map<String, dynamic>.from(userObject as Map<dynamic, dynamic>))));
-  //     });
-  //     return user;
-  //   }
-  //   catch(error){
-  //     print(error);
-  //   }
-  // }
-
-  // Future<User> _getUser(User user) async{
-  //   // final userRef = database.child("/Users/${user.localId}");
-  //   // DatabaseReference ref = FirebaseDatabase.instance.ref("/Users/${user.localId}");
-  //   User usuario;
-  //
-  //   try {
-  //     DatabaseEvent event = await FirebaseDatabase.instance.ref("/Users/${user.localId}").once();
-  //     // userObject = event.snapshot.value;
-  //     user = User.fromJson(jsonDecode(jsonEncode(Map<String, dynamic>.from(event.snapshot.value as Map<dynamic, dynamic>))));
-  //     print(user);
-  //     print("--------");
-  //     print(user.runtimeType);
-  //     return user;
-  //   }
-  //   catch(error){
-  //     print(error);
-  //     return usuario;
-  //   }
-  // }
-
-  // _writeUserOnDatabase(User user) {
-  //   final userRef = database.child('/Users/${user.localId}');
-  //   try{
-  //     userRef.onValue.listen((event) {
-  //       if (event.snapshot.exists){
-  //         userObject = event.snapshot.value;
-  //         user = User.fromJson(jsonDecode(jsonEncode(Map<String, dynamic>.from(userObject as Map<dynamic, dynamic>))));
-  //         userRef.update(user.toJson());
-  //         print("usuario atualizado no BD!");
-  //       }
-  //       else{
-  //         userRef.update(user.toJson());
-  //         print("usuario escrito no BD!");
-  //       }
-  //     });
-  //   }
-  //   catch(error){
-  //     ScaffoldMessenger.of(context).showSnackBar(SnackBarProvider().showError(error.toString()));
-  //   }
-  // }
 
 
 
@@ -137,8 +81,8 @@ class LoginPageState extends State<LoginPage> {
                       decoration: const InputDecoration(
                         hintText: 'Insira seu email',
                         focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                            borderSide: BorderSide(color: Colors.blue)
+                          borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                          borderSide: BorderSide(color: Colors.blue),
                         ),
                         filled: true,
                         contentPadding:
