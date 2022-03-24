@@ -1,3 +1,4 @@
+import 'package:academiaapp/pages/register_exercises.dart';
 import 'package:flutter/material.dart';
 import 'package:academiaapp/pages/detailed_exercise_page.dart';
 import 'package:academiaapp/pages/home_page_admin.dart';
@@ -42,10 +43,11 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Gym App',
       theme: ThemeData(fontFamily: 'Fredoka'),
-      home: const DetailedExercisePage(name: "Abdominal",),
+      // home: const DetailedExercisePage(name: "Abdominal",),
       // home: const LoginPage(),
       // home: const HomePageAdmin(),
       // home: const HomePage(name: "Fernando", localId: 'omtd0ZeEEETJSxkzXLKk09tFEcM2',),
+      home: const RegisterExercisesPage(),
       debugShowCheckedModeBanner: false,
     );
   }

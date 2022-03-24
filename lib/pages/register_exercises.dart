@@ -1,15 +1,17 @@
-import 'package:academiaapp/common/providers/snack_bar_provider.dart';
-import 'package:flutter/material.dart';
 
 /*Models*/
 import 'package:academiaapp/common/models/exercise.dart';
 
 /*Providers*/
+import 'package:academiaapp/common/providers/snack_bar_provider.dart';
 import 'package:academiaapp/common/providers/container_provider.dart';
 
 /*Plugins*/
+import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:http/http.dart' as http;
+// import 'package:media_gallery/media_gallery.dart';
+// import 'package:media_gallery_example/picker/picker.dart';
+// import 'package:media_gallery_example/picker/selection.dart';
 
 
 
@@ -78,8 +80,8 @@ class _RegisterExercisesPageState extends State<RegisterExercisesPage> {
                           color: Colors.blue,
                         ),
                       ),
-                      validator: (String? email) {
-                        if (email == null || email.isEmpty) {
+                      validator: (String? name) {
+                        if (name == null || name.isEmpty) {
                           return 'Por favor, insira o nome corretamente';
                         }
                         return null;
@@ -91,8 +93,8 @@ class _RegisterExercisesPageState extends State<RegisterExercisesPage> {
                       decoration: const InputDecoration(
                         hintText: 'Link para a aula no YouTube',
                         focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                            borderSide: BorderSide(color: Colors.blue)
+                          borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                          borderSide: BorderSide(color: Colors.blue),
                         ),
                         filled: true,
                         contentPadding:
@@ -103,6 +105,12 @@ class _RegisterExercisesPageState extends State<RegisterExercisesPage> {
                           color: Colors.blue,
                         ),
                       ),
+                      validator: (String? name) {
+                        if (name == null || name.isEmpty) {
+                          return 'Por favor, insira o nome corretamente';
+                        }
+                        return null;
+                      },
                     ),
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 16.0),
@@ -119,6 +127,39 @@ class _RegisterExercisesPageState extends State<RegisterExercisesPage> {
                               _writeExerciseOnDatabse(exercise);
                               ScaffoldMessenger.of(context).showSnackBar(SnackBarProvider().showExerciseConfirmAlert(_nameInputController.text));
                             }
+                          },
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 10,),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: const <Widget>[
+                        Expanded(
+                          child: Divider(
+                            thickness: 1,
+                            indent: 10,
+                            endIndent: 10,
+                          ),
+                        ),
+                        Text("Ou"),
+                        Expanded(
+                          child: Divider(
+                            thickness: 1,
+                            indent: 10,
+                            endIndent: 10,
+                          ),
+                        ),
+                      ],
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 16.0),
+                      child: FractionallySizedBox(
+                        widthFactor: 1,
+                        child: ElevatedButton(
+                          child: const Text("Escolher video da galeria"),
+                          onPressed: () {
+                            //TODO: Implementar função de pergar video da galeria
                           },
                         ),
                       ),

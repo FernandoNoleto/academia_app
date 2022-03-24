@@ -23,6 +23,7 @@ dependencies:
   http: ^0.13.4
   firebase_storage: ^10.2.7
   firebase_database: ^9.0.6
+  media_gallery: ^0.1.5
 
 dev_dependencies:
   flutter_test:
