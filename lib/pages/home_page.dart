@@ -1,3 +1,4 @@
+import 'package:academiaapp/common/models/exercise.dart';
 import 'package:flutter/material.dart';
 
 /*Paginas*/

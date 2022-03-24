@@ -42,10 +42,10 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Gym App',
       theme: ThemeData(fontFamily: 'Fredoka'),
-      // home: const DetailedExercisePage(),
-      home: const LoginPage(),
+      home: const DetailedExercisePage(name: "Abdominal",),
+      // home: const LoginPage(),
       // home: const HomePageAdmin(),
-      // home: HomePage(name: "Fernando", uid: "ID",),
+      // home: const HomePage(name: "Fernando", localId: 'omtd0ZeEEETJSxkzXLKk09tFEcM2',),
       debugShowCheckedModeBanner: false,
     );
   }

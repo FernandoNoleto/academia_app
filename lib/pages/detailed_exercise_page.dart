@@ -26,14 +26,20 @@ class _DetailedExercisePageState extends State<DetailedExercisePage> {
   final dbRef = FirebaseDatabase.instance.ref();
   late Object? exerciseObject;
   late Exercise exercise;
-  String link = "";
+  late String? link = "";
+  late YoutubePlayerController _controller;
+
 
   @override
   void initState(){
     super.initState();
-    dbRef.child("Exercises/${widget.name}").onValue.listen((event) {
-      exerciseObject = event.snapshot.value;
-      exercise = Exercise.fromJson(jsonDecode(jsonEncode(Map<String, dynamic>.from(exerciseObject as Map<dynamic, dynamic>))));
+    _getExercise();
+  }
+
+  void _getExercise()async{
+    DatabaseEvent event = await FirebaseDatabase.instance.ref("/Exercises/${widget.name}").once();
+    setState(() {
+      exercise = Exercise.fromJson(jsonDecode(jsonEncode(Map<String, dynamic>.from(event.snapshot.value as Map<dynamic, dynamic>))));
       var arr = exercise.linkYouTube.split("=");
       link = arr[1]; // dividir o link do YT onde tem o '=' e pegar somente a segunda parte
     });
@@ -47,36 +53,13 @@ class _DetailedExercisePageState extends State<DetailedExercisePage> {
         title: const Text('Detalhes do Exercício'),
       ),
       body: ContainerProvider(
+        vertical:10,
         horizontal: 10,
-        vertical: 10,
-        child: SingleChildScrollView(
-          child: Column(
-            children: <Widget> [
-              Align(
-                alignment: Alignment.centerLeft,
-                child: Text(widget.name,
-                  style: const TextStyle(
-                    fontSize: 30,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 10,),
-              YoutubePlayer(
-                controller: YoutubeProvider().youtubePlayerController(link),
-                liveUIColor: Colors.amber,
-              ),
-              const SizedBox(height: 5,),
-              const Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  "Vídeo explicativo do exercício:",
-                  style: TextStyle(
-                    fontSize: 15,
-                  ),
-                ),
-              ),
-            ],
-          ),
+        child: link! != "" ?
+        YouTubePlayerProvider(urlVideo: link!)
+            :
+        const Center(
+          child: CircularProgressIndicator(),
         ),
       ),
     );
