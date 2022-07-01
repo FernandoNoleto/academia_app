@@ -54,6 +54,8 @@ class _SetDailyExercisesPageState extends State<SetDailyExercisesPage> {
     _getUser();
     widget.list.isNotEmpty ? listOfExercises = widget.list : listOfExercises.add(""); // Lista é carregada desde a tela anterior
     dropdownValue = listOfExercises.first;
+    // print(dropdownValue);
+    // print(listOfExercises);
   }
 
   void _getUser() async{

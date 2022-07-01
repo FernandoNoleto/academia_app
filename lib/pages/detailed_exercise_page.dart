@@ -40,8 +40,9 @@ class _DetailedExercisePageState extends State<DetailedExercisePage> {
     DatabaseEvent event = await FirebaseDatabase.instance.ref("/Exercises/${widget.name}").once();
     setState(() {
       exercise = Exercise.fromJson(jsonDecode(jsonEncode(Map<String, dynamic>.from(event.snapshot.value as Map<dynamic, dynamic>))));
-      var arr = exercise.linkYouTube.split("=");
-      link = arr[1]; // dividir o link do YT onde tem o '=' e pegar somente a segunda parte
+      // var arr = exercise.linkYouTube.split("=");
+      // link = arr[1]; // dividir o link do YT onde tem o '=' e pegar somente a segunda parte
+      link = YoutubePlayer.convertUrlToId(exercise.linkYouTube);
     });
   }
 

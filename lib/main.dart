@@ -44,10 +44,10 @@ class MyApp extends StatelessWidget {
       title: 'Gym App',
       theme: ThemeData(fontFamily: 'Fredoka'),
       // home: const DetailedExercisePage(name: "Abdominal",),
-      // home: const LoginPage(),
+      home: const LoginPage(),
       // home: const HomePageAdmin(),
       // home: const HomePage(name: "Fernando", localId: 'omtd0ZeEEETJSxkzXLKk09tFEcM2',),
-      home: const RegisterExercisesPage(),
+      // home: const RegisterExercisesPage(),
       debugShowCheckedModeBanner: false,
     );
   }
